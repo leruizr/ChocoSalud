@@ -1,0 +1,10 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.ChocoSalud" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/dorado</item>
+        <item name="colorOnPrimary">@color/azul_oscuro</item>
+        <item name="colorSecondary">@color/dorado</item>
+        <item name="android:colorBackground">@color/azul_oscuro</item>
+        <item name="colorSurface">@color/azul_oscuro</item>
+    </style>
+</resources>
