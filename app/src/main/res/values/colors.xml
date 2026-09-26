@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    COLORES DE LA APP.
+    Un color se escribe en formato #AARRGGBB: transparencia (FF = opaco) + rojo + verde + azul.
+    En los diseños y el tema se usan por su nombre, por ejemplo @color/azul_chocosalud.
+-->
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>

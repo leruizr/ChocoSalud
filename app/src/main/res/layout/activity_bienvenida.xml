@@ -1,4 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    DISEÑO DE LA PANTALLA 1: Bienvenida (lógica en ActivityBienvenida.java).
+
+    Estructura: un LinearLayout vertical que centra sus hijos, de arriba hacia abajo:
+    logo, nombre de la app, descripción y botón "Comenzar".
+
+    Los textos NO están escritos aquí: se usan referencias @string/... que apuntan a
+    res/values/strings.xml. Así todos los textos están en un solo lugar.
+-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
@@ -7,13 +16,26 @@
     android:gravity="center"
     android:orientation="vertical"
     tools:context=".ActivityBienvenida">
+    <!--
+        Atributos de la raíz:
+        - android:id="@+id/main": el nombre con el que el código Java encuentra esta vista
+          (R.id.main). Se usa para reservar el espacio de las barras del sistema.
+        - match_parent: ocupa todo el ancho / alto disponible de la pantalla.
+        - gravity="center": centra el contenido dentro del layout.
+        - orientation="vertical": los hijos se apilan uno debajo de otro.
+        - tools:context: solo ayuda al editor de Android Studio; no afecta a la app.
+    -->
 
+    <!-- Logo de la app. contentDescription es el texto que lee el lector de pantalla
+         para personas con discapacidad visual. -->
     <ImageView
         android:layout_width="220dp"
         android:layout_height="220dp"
         android:contentDescription="@string/logo_descripcion"
         android:src="@drawable/logo_chocosalud" />
 
+    <!-- Nombre de la app. ?attr/colorPrimary toma el color principal del tema: azul en
+         modo claro y dorado en modo oscuro (ver res/values/themes.xml). -->
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -23,6 +45,7 @@
         android:textSize="34sp"
         android:textStyle="bold" />
 
+    <!-- Descripción corta de la app, centrada y con márgenes a los lados. -->
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -34,6 +57,8 @@
         android:textColor="?attr/colorOnBackground"
         android:textSize="16sp" />
 
+    <!-- Botón "Comenzar". android:onClick="irInicioSesion" hace que, al tocarlo, Android
+         ejecute el método irInicioSesion(View) de ActivityBienvenida.java. -->
     <com.google.android.material.button.MaterialButton
         android:id="@+id/botonComenzar"
         android:layout_width="match_parent"

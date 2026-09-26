@@ -1,4 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    DISEÑO DE LA PANTALLA 4: Menú principal (lógica en ActivityMenuPrincipal.java).
+
+    Estructura:
+      LinearLayout (raíz, id "main")
+        └─ ScrollView
+             └─ LinearLayout vertical
+                  ├─ logo, nombre de la app y pregunta "¿Qué deseas hacer hoy?"
+                  ├─ fila 1: [Centros de salud] [Agendar cita]
+                  └─ fila 2: [Historial médico] [Perfil y notificaciones]
+
+    Cada botón del menú es una TARJETA (MaterialCardView) que contiene un ícono y un texto.
+    Las cuatro tarjetas son iguales; solo cambian el id, el ícono, el texto y el método onClick.
+-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -8,6 +22,7 @@
     android:orientation="vertical"
     tools:context=".ActivityMenuPrincipal">
 
+    <!-- ScrollView por si en un teléfono pequeño el contenido no cabe completo. -->
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -19,6 +34,7 @@
             android:orientation="vertical"
             android:padding="24dp">
 
+            <!-- Logo -->
             <ImageView
                 android:layout_width="96dp"
                 android:layout_height="96dp"
@@ -26,6 +42,7 @@
                 android:contentDescription="@string/logo_descripcion"
                 android:src="@drawable/logo_chocosalud" />
 
+            <!-- Nombre de la app -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -36,6 +53,7 @@
                 android:textSize="28sp"
                 android:textStyle="bold" />
 
+            <!-- Pregunta de bienvenida -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -46,11 +64,19 @@
                 android:textColor="?attr/colorOnBackground"
                 android:textSize="16sp" />
 
+            <!-- FILA 1. Un LinearLayout horizontal pone las dos tarjetas lado a lado.
+                 Cada tarjeta tiene layout_width="0dp" y layout_weight="1": significa
+                 "reparte el ancho disponible en partes iguales", así cada una ocupa la mitad. -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal">
 
+                <!-- TARJETA 1: Centros de salud.
+                     - clickable / focusable: la tarjeta se puede tocar.
+                     - onClick="irCentrosSalud": método de ActivityMenuPrincipal que se ejecuta.
+                     - strokeColor / strokeWidth: borde dorado (?attr/colorSecondary del tema).
+                     - cardCornerRadius: esquinas redondeadas. -->
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/tarjetaCentrosSalud"
                     style="@style/Widget.Material3.CardView.Outlined"
@@ -65,6 +91,9 @@
                     app:strokeColor="?attr/colorSecondary"
                     app:strokeWidth="2dp">
 
+                    <!-- Contenido de la tarjeta: ícono y texto, uno debajo del otro y
+                         centrados. Una tarjeta solo admite un hijo, por eso van dentro
+                         de este LinearLayout. -->
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="match_parent"
@@ -72,6 +101,9 @@
                         android:orientation="vertical"
                         android:padding="12dp">
 
+                        <!-- Ícono. app:tint lo pinta con el color principal del tema.
+                             importantForAccessibility="no": es decorativo, el lector de
+                             pantalla lee solo el texto de abajo. -->
                         <ImageView
                             android:layout_width="56dp"
                             android:layout_height="56dp"
@@ -91,6 +123,8 @@
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
+                <!-- TARJETA 2: Agendar cita (igual que la anterior; onClick="irCitas").
+                     Tiene marginStart en vez de marginEnd para dejar el espacio entre las dos. -->
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/tarjetaCitas"
                     style="@style/Widget.Material3.CardView.Outlined"
@@ -132,12 +166,14 @@
                 </com.google.android.material.card.MaterialCardView>
             </LinearLayout>
 
+            <!-- FILA 2: mismo esquema que la fila 1, con marginTop para separarla de arriba. -->
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
                 android:orientation="horizontal">
 
+                <!-- TARJETA 3: Historial médico (onClick="irHistorial") -->
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/tarjetaHistorial"
                     style="@style/Widget.Material3.CardView.Outlined"
@@ -178,6 +214,7 @@
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
 
+                <!-- TARJETA 4: Perfil y notificaciones (onClick="irPerfil") -->
                 <com.google.android.material.card.MaterialCardView
                     android:id="@+id/tarjetaPerfil"
                     style="@style/Widget.Material3.CardView.Outlined"

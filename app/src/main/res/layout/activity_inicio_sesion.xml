@@ -1,4 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    DISEÑO DE LA PANTALLA 3: Inicio de sesión (lógica en ActivityInicioSesion.java).
+
+    Estructura (de afuera hacia adentro):
+      LinearLayout (raíz, id "main")
+        └─ ScrollView (permite desplazar si el teclado ocupa espacio)
+             └─ LinearLayout (contenido del formulario)
+                  ├─ logo, título y subtítulo
+                  ├─ campo de correo
+                  ├─ campo de contraseña
+                  ├─ botón "Ingresar"
+                  └─ botón de texto "¿No tienes cuenta? Regístrate"
+
+    Los ids "scrollFormulario" y "contenidoFormulario" los usa AjusteTeclado.java.
+-->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -8,12 +23,17 @@
     android:orientation="vertical"
     tools:context=".ActivityInicioSesion">
 
+    <!-- ScrollView: contenedor que permite desplazar su contenido hacia arriba y abajo.
+         fillViewport="true" hace que el contenido se estire hasta llenar la pantalla cuando
+         es corto (así se puede centrar); si es largo, se desplaza. -->
     <ScrollView
         android:id="@+id/scrollFormulario"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:fillViewport="true">
 
+        <!-- Un ScrollView solo puede tener UN hijo, por eso todo va dentro de este layout.
+             gravity="center_vertical" centra el formulario en vertical cuando sobra espacio. -->
         <LinearLayout
             android:id="@+id/contenidoFormulario"
             android:layout_width="match_parent"
@@ -22,6 +42,7 @@
             android:orientation="vertical"
             android:padding="24dp">
 
+            <!-- Logo -->
             <ImageView
                 android:layout_width="140dp"
                 android:layout_height="140dp"
@@ -29,6 +50,7 @@
                 android:contentDescription="@string/logo_descripcion"
                 android:src="@drawable/logo_chocosalud" />
 
+            <!-- Título de la pantalla en el color principal del tema -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -39,6 +61,7 @@
                 android:textSize="28sp"
                 android:textStyle="bold" />
 
+            <!-- Subtítulo -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -49,6 +72,13 @@
                 android:textColor="?attr/colorOnBackground"
                 android:textSize="16sp" />
 
+            <!-- CAMPO DE CORREO.
+                 Un campo de texto de Material Design se arma con DOS vistas anidadas:
+                 - TextInputLayout: la caja con borde (estilo OutlinedBox), la etiqueta que
+                   sube al escribir (hint) y el mensaje de error.
+                 - TextInputEditText (dentro): donde el usuario escribe.
+                 El código Java usa el id del layout para mostrar errores y el id del campo
+                 para leer lo que se escribió. -->
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/layoutCorreo"
                 style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
@@ -56,6 +86,8 @@
                 android:layout_height="wrap_content"
                 android:hint="@string/hint_correo">
 
+                <!-- inputType="textEmailAddress": el teclado muestra la tecla @ y sugiere
+                     escribir un correo. -->
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/campoCorreo"
                     android:layout_width="match_parent"
@@ -63,6 +95,8 @@
                     android:inputType="textEmailAddress" />
             </com.google.android.material.textfield.TextInputLayout>
 
+            <!-- CAMPO DE CONTRASEÑA.
+                 endIconMode="password_toggle" agrega el "ojito" para mostrar u ocultar. -->
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/layoutContrasena"
                 style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
@@ -72,6 +106,8 @@
                 android:hint="@string/hint_contrasena"
                 app:endIconMode="password_toggle">
 
+                <!-- inputType="textPassword": oculta lo escrito con puntos.
+                     maxLength="4": no deja escribir más de 4 caracteres. -->
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/campoContrasena"
                     android:layout_width="match_parent"
@@ -80,6 +116,8 @@
                     android:maxLength="4" />
             </com.google.android.material.textfield.TextInputLayout>
 
+            <!-- Botón principal. onClick="iniciarSesion" llama al método iniciarSesion(View)
+                 de ActivityInicioSesion.java. -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/botonIngresar"
                 android:layout_width="match_parent"
@@ -89,6 +127,8 @@
                 android:text="@string/boton_ingresar"
                 android:textSize="16sp" />
 
+            <!-- Botón secundario con estilo "TextButton": sin fondo, solo texto, para que se
+                 vea como un enlace. Lleva al registro (método irRegistro). -->
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/botonIrRegistro"
                 style="@style/Widget.Material3.Button.TextButton"

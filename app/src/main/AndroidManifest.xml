@@ -2,6 +2,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" >
 
+    <!--
+        AndroidManifest.xml: la "ficha de identidad" de la app para Android.
+        Aquí se declara la app, su tema, su ícono y TODAS sus pantallas: una pantalla que no
+        esté declarada en este archivo no se puede abrir.
+    -->
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -11,17 +16,28 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.ChocoSalud" >
+        <!-- Pantalla 4: Menú principal.
+             exported="false": solo esta app puede abrirla (otras apps no). -->
         <activity
             android:name=".ActivityMenuPrincipal"
             android:exported="false" />
+        <!-- Pantalla 3: Inicio de sesión.
+             windowSoftInputMode="adjustResize": cuando aparece el teclado, la pantalla se
+             ajusta para no quedar tapada (ver también AjusteTeclado.java). -->
         <activity
             android:name=".ActivityInicioSesion"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
+        <!-- Pantalla 2: Registro de usuario -->
         <activity
             android:name=".ActivityRegistroUsuario"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
+        <!-- Pantalla 1: Bienvenida. Es la pantalla con la que arranca la app:
+             el intent-filter con MAIN + LAUNCHER le indica a Android "empieza por aquí" y hace
+             que la app aparezca en el menú de aplicaciones del teléfono.
+             exported="true": es obligatorio en la pantalla de arranque para que el sistema
+             pueda abrirla. -->
         <activity
             android:name=".ActivityBienvenida"
             android:exported="true" >
@@ -31,6 +47,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        <!-- Pantalla de ejemplo ("Hello World") que trae la plantilla de Android Studio.
+             No se usa en la app. -->
         <activity
             android:name=".MainActivity"
             android:exported="false"

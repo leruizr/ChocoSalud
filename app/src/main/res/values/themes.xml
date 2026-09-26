@@ -1,12 +1,24 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
+    <!--
+        TEMA VISUAL (modo claro).
+        Un tema define los colores y estilos por defecto de TODA la app. Así los diseños no
+        tienen que repetir colores: usan atributos como ?attr/colorPrimary y el tema decide
+        cuál es. Este archivo se usa con el teléfono en modo claro; el de modo oscuro está
+        en res/values-night/themes.xml y Android elige uno u otro solo.
+    -->
     <style name="Base.Theme.ChocoSalud" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Color principal: botones, títulos y bordes de los campos. -->
         <item name="colorPrimary">@color/azul_chocosalud</item>
+        <!-- Color del texto y los íconos que van SOBRE el color principal (ej. texto de un botón). -->
         <item name="colorOnPrimary">@color/white</item>
+        <!-- Color secundario: se usa en el borde dorado de las tarjetas del menú. -->
         <item name="colorSecondary">@color/dorado</item>
+        <!-- Color de fondo de las pantallas. -->
         <item name="android:colorBackground">@color/crema</item>
+        <!-- Color de las superficies (tarjetas, cajas de texto). -->
         <item name="colorSurface">@color/crema</item>
     </style>
 
+    <!-- Este es el tema que se aplica en AndroidManifest.xml. Hereda todo del de arriba. -->
     <style name="Theme.ChocoSalud" parent="Base.Theme.ChocoSalud" />
 </resources>

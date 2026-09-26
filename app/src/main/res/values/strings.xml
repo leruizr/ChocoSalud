@@ -1,4 +1,11 @@
 <resources>
+    <!--
+        TEXTOS DE LA APP.
+        Todos los textos que ve el usuario se escriben aquí, agrupados por pantalla, y en los
+        diseños y el código se usan por su nombre: @string/boton_comenzar en un XML,
+        R.string.boton_comenzar en Java. Así, para cambiar una palabra o traducir la app,
+        se hace en un solo lugar.
+    -->
     <string name="app_name">ChocóSalud</string>
 
     <!-- Bienvenida -->
