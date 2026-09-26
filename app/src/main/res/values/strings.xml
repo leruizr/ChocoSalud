@@ -41,4 +41,19 @@
 
     <!-- Compartidos -->
     <string name="datos_validos">Datos validados correctamente</string>
+
+    <!-- Agendar cita -->
+    <string name="saludo">Agende su cita</string>
+    <string name="subtitulo">Sea Bienvenido, agende sus citas medicas ingrese sus datos y presione enviar</string>
+    <string name="especialidad">Especialidad:</string>
+    <string name="contacto">Telefono de contacto:</string>
+    <string name="telefono">Telefono</string>
+    <string name="fecha">Fecha de la cita:</string>
+    <string name="Enviar">Enviar</string>
+    <string-array name="opciones_citas">
+        <item>Seleccione una especialidad...</item>
+        <item>Pediatria</item>
+        <item>Odontologia</item>
+    </string-array>
+
 </resources>

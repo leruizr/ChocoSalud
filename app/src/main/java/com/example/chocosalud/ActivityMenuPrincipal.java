@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import android.content.Intent;
 
 public class ActivityMenuPrincipal extends AppCompatActivity {
 
@@ -30,7 +31,8 @@ public class ActivityMenuPrincipal extends AppCompatActivity {
     }
 
     public void irCitas(View v) {
-        mostrarProximamente();
+        Intent intent = new Intent(this, ActivityAgendarCita.class);
+        startActivity(intent);
     }
 
     public void irHistorial(View v) {
