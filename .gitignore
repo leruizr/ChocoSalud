@@ -13,3 +13,7 @@
 .externalNativeBuild
 .cxx
 local.properties
+
+# Configuración del IDE: cada equipo genera la suya al abrir el proyecto
+.idea/
+app/.idea/
