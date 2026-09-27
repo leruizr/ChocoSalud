@@ -1,5 +1,6 @@
 package com.example.chocosalud;
 
+// IMPORTS: traen las clases de Android que usa esta pantalla.
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Toast;
@@ -11,28 +12,27 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import android.content.Intent;
 
-/**
- * PANTALLA 4: Menú principal.
+/*
+ * CLASE: ActivityMenuPrincipal  ->  PANTALLA 4 (Menú principal)
  *
- * Es el punto de partida una vez que el usuario inició sesión. Muestra cuatro tarjetas:
- * Centros de salud, Agendar cita, Historial médico y Perfil y notificaciones.
- * Cada tarjeta llama a un método de esta clase cuando se toca (android:onClick en el XML).
- *
- * Es la pantalla "raíz" de la app: el login la abre borrando las pantallas anteriores,
- * por eso el botón Atrás del teléfono sale de la app.
- *
- * Diseño: res/layout/activity_menu_principal.xml
+ * - Muestra 4 tarjetas: Centros de salud, Agendar cita, Historial médico y Perfil y notificaciones.
+ * - Cada tarjeta llama a un MÉTODO de esta clase (android:onClick en el XML).
+ * - Su diseño visual está en: res/layout/activity_menu_principal.xml
  */
 public class ActivityMenuPrincipal extends AppCompatActivity {
 
+    /*
+     * MÉTODO: onCreate
+     * - Android lo llama automáticamente cuando se crea la pantalla.
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_menu_principal);
 
-        // Reserva el espacio de las barras del sistema (estado y navegación) para que el
-        // contenido no quede debajo de ellas. Igual que en ActivityBienvenida.
+        // Deja espacio para que el contenido no quede tapado por las barras del teléfono.
+        // (v, insets) -> { ... } es una FUNCIÓN ANÓNIMA (lambda).
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
@@ -40,30 +40,29 @@ public class ActivityMenuPrincipal extends AppCompatActivity {
         });
     }
 
-    // Tarjeta "Centros de salud" (pantalla 5). Esa pantalla aún no existe: por ahora solo se
-    // avisa al usuario. Cuando se cree, aquí se abrirá con un Intent, como hace irCitas.
+    // MÉTODO: irCentrosSalud -> tarjeta "Centros de salud". Esa pantalla aún no existe: muestra un aviso.
     public void irCentrosSalud(View v) {
         mostrarProximamente();
     }
 
-    // Tarjeta "Agendar cita": abre la pantalla de agendar cita (ActivityAgendarCita).
+    // MÉTODO: irCitas -> tarjeta "Agendar cita". Abre la pantalla ActivityAgendarCita.
     public void irCitas(View v) {
         Intent intent = new Intent(this, ActivityAgendarCita.class);
         startActivity(intent);
     }
 
-    // Tarjeta "Historial médico" (pantalla 7): pendiente, por ahora solo avisa.
+    // MÉTODO: irHistorial -> tarjeta "Historial médico". Pantalla pendiente: muestra un aviso.
     public void irHistorial(View v) {
         mostrarProximamente();
     }
 
-    // Tarjeta "Perfil y notificaciones" (pantalla 8): pendiente, por ahora solo avisa.
+    // MÉTODO: irPerfil -> tarjeta "Perfil y notificaciones". Pantalla pendiente: muestra un aviso.
     public void irPerfil(View v) {
         mostrarProximamente();
     }
 
-    // Método auxiliar para no repetir el mismo código en cada tarjeta pendiente.
-    // Toast = mensaje corto que aparece un momento abajo y desaparece solo.
+    // MÉTODO: mostrarProximamente -> muestra el mensaje "Esta sección estará disponible pronto".
+    // Se creó para no repetir el mismo código en las tres tarjetas pendientes.
     private void mostrarProximamente() {
         Toast.makeText(this, R.string.proximamente, Toast.LENGTH_SHORT).show();
     }
