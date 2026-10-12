@@ -19,9 +19,9 @@ clínico básico y recibir notificaciones sobre la atención en salud.
 | 1 | Bienvenida | Hecha |
 | 2 | Registro de usuario | Hecha (solo valida los datos, no los guarda) |
 | 3 | Inicio de sesión | Hecha (solo valida el formato, no comprueba usuarios) |
-| 4 | Menú principal | Hecha (las tarjetas todavía muestran "Esta sección estará disponible pronto") |
+| 4 | Menú principal | Hecha ("Agendar cita" abre su pantalla; las demás tarjetas muestran "Esta sección estará disponible pronto") |
 | 5 | Directorio de centros de salud (con GPS) | Pendiente |
-| 6 | Agendamiento de citas | Pendiente |
+| 6 | Agendamiento de citas | Hecha (solo la parte visual; el botón "Enviar" aún no guarda la cita) |
 | 7 | Historial médico | Pendiente |
 | 8 | Perfil y notificaciones | Pendiente |
 
@@ -37,6 +37,8 @@ o documentos) y **notificaciones** (recordatorios de citas).
 **En el computador (Windows, Mac o Linux):**
 
 - **Android Studio**, en su versión estable más reciente: <https://developer.android.com/studio>.
+  Debe ser **Android Studio**, no IntelliJ IDEA ni otro editor: se parecen mucho, pero solo Android
+  Studio trae el soporte para Android.
   Este proyecto usa herramientas muy nuevas (Android Gradle Plugin 9.3.3 y Gradle 9.5.0). Si tu Android
   Studio es antiguo, te pedirá actualizarlo: hazlo.
 - **Conexión a internet la primera vez**. Android Studio descargará solo lo que falte (Gradle, el JDK
@@ -52,23 +54,24 @@ o documentos) y **notificaciones** (recordatorios de citas).
 
 ## 3. Cómo obtener el proyecto
 
-Cuando el repositorio esté publicado en GitHub, tienes dos formas:
+El repositorio es público: <https://github.com/leruizr/ChocoSalud>. Tienes dos formas de obtenerlo:
 
-**Opción A: descargar el ZIP (la más fácil)**
+**Opción A: descargar el ZIP (la más fácil, solo para ver o probar el proyecto)**
 
-1. Entra a la página del repositorio.
+1. Entra a <https://github.com/leruizr/ChocoSalud>.
 2. Pulsa el botón verde **Code** y luego **Download ZIP**.
-3. Descomprime el ZIP en una carpeta de tu computador.
+3. Descomprime el ZIP en una carpeta de tu computador. La carpeta que se crea se llama
+   **`ChocoSalud-main`**: esa es la que debes abrir en Android Studio.
 
 **Opción B: clonar con Git (recomendada si vas a trabajar en el proyecto)**
 
 Necesitas tener [Git](https://git-scm.com/downloads) instalado. Abre una terminal y ejecuta:
 
 ```bash
-git clone <URL-DEL-REPOSITORIO>
+git clone https://github.com/leruizr/ChocoSalud.git
 ```
 
-(Reemplaza `<URL-DEL-REPOSITORIO>` por la dirección que aparece en el botón **Code** de GitHub.)
+Esto crea la carpeta **`ChocoSalud`**.
 
 ---
 
@@ -76,9 +79,10 @@ git clone <URL-DEL-REPOSITORIO>
 
 ### 4.1 Abrir el proyecto
 
-1. Abre Android Studio.
-2. Elige **Open** (Abrir) y selecciona la carpeta **`ChocoSalud`** (la que contiene el archivo
-   `settings.gradle.kts`). Elige la carpeta raíz, no la carpeta `app`.
+1. Abre **Android Studio** (no IntelliJ IDEA).
+2. Elige **Open** (Abrir) y selecciona la carpeta del proyecto: **`ChocoSalud`** si lo clonaste, o
+   **`ChocoSalud-main`** si descargaste el ZIP. Es la que contiene el archivo `settings.gradle.kts`.
+   Elige esa carpeta raíz, no la carpeta `app`.
 3. Espera. Abajo a la derecha verás una barra de progreso ("Gradle sync"). **La primera vez puede tardar
    varios minutos** porque descarga muchas cosas. No la interrumpas.
 4. Si aparece un mensaje pidiendo instalar **"Android SDK Platform 37"** (u otro componente), pulsa el
@@ -129,7 +133,10 @@ Si solo quieres que otra persona pruebe la app:
    marca el campo en rojo. *Por ahora no guarda nada.* Para regresar pulsa **¿Ya tienes cuenta? Inicia
    sesión**.
 4. **Menú principal:** cuatro tarjetas (Centros de salud, Agendar cita, Historial médico, Perfil y
-   notificaciones). Todavía muestran el aviso "Esta sección estará disponible pronto".
+   notificaciones). **Agendar cita** abre su pantalla; las otras tres todavía muestran el aviso "Esta
+   sección estará disponible pronto".
+5. **Agendar cita:** permite elegir la especialidad, escribir un teléfono de contacto y escoger la fecha
+   en un calendario. *Por ahora es solo la parte visual: el botón "Enviar" aún no guarda la cita.*
 
 El botón **Atrás** del menú principal cierra la app (no vuelve al login).
 
@@ -148,7 +155,8 @@ Cada pantalla es una clase "Activity" (código) que va de la mano con un archivo
 | `ActivityBienvenida.java` | Pantalla 1. Es la primera que se abre. El botón "Comenzar" (`irInicioSesion`) lleva al login. |
 | `ActivityInicioSesion.java` | Pantalla 3. Valida correo y contraseña; si están bien abre el menú (`iniciarSesion`). También enlaza al registro (`irRegistro`). |
 | `ActivityRegistroUsuario.java` | Pantalla 2. Valida los 6 campos del formulario (`registrarUsuario`) y permite volver al login (`irInicioSesion`). |
-| `ActivityMenuPrincipal.java` | Pantalla 4. Las cuatro tarjetas (`irCentrosSalud`, `irCitas`, `irHistorial`, `irPerfil`); por ahora solo muestran un aviso. |
+| `ActivityMenuPrincipal.java` | Pantalla 4. Las cuatro tarjetas (`irCentrosSalud`, `irCitas`, `irHistorial`, `irPerfil`). `irCitas` abre Agendar cita; las demás muestran un aviso (`mostrarProximamente`). |
+| `ActivityAgendarCita.java` | Pantalla 6. Agendar cita; por ahora solo carga su diseño (aún no tiene lógica). |
 | `AjusteTeclado.java` | Ayuda compartida: evita que el teclado del teléfono tape los campos de un formulario. La usan el login y el registro. |
 | `MainActivity.java` | Pantalla de ejemplo que trae Android Studio ("Hello World"). **No se usa**; se puede borrar más adelante. |
 
@@ -160,6 +168,7 @@ Cada pantalla es una clase "Activity" (código) que va de la mano con un archivo
 | `activity_inicio_sesion.xml` | Diseño de la pantalla 3 (correo, contraseña, botones). |
 | `activity_registro_usuario.xml` | Diseño de la pantalla 2 (formulario de registro). |
 | `activity_menu_principal.xml` | Diseño de la pantalla 4 (las cuatro tarjetas). |
+| `activity_agendar_cita.xml` | Diseño de la pantalla 6 (especialidad, teléfono, calendario y botón "Enviar"). |
 | `activity_main.xml` | Diseño de `MainActivity` (no se usa). |
 
 ### 6.3 Recursos (`app/src/main/res/`)
@@ -262,6 +271,11 @@ teléfono en modo oscuro.
 
 ## 8. Trabajar en equipo con Git (guía corta)
 
+**Antes de empezar:** para poder subir cambios necesitas que el dueño del repositorio te invite como
+colaborador (en GitHub: *Settings → Collaborators → Add people*). Te llegará un correo de GitHub:
+acepta la invitación. Sin ese paso puedes descargar el proyecto, pero el `git push` te dará un error de
+permisos.
+
 Para no pisarse el trabajo, cada persona trabaja en su **propia rama** y luego se unen los cambios.
 
 ```bash
@@ -290,6 +304,8 @@ Recomendaciones:
 
 | Problema | Qué hacer |
 |----------|-----------|
+| Al pulsar ▶ sale "Unknown run configuration type AndroidRunConfigurationType" o "Plugin Android… is currently not installed" | Abriste el proyecto con **IntelliJ IDEA** (u otro editor) y no con **Android Studio**. Ciérralo y ábrelo con Android Studio (*File → Open*). |
+| `git push` da un error de permisos (403 o "Permission denied") | Aún no eres colaborador del repositorio. Pide la invitación al dueño y acéptala desde el correo de GitHub. |
 | El *Gradle sync* falla o se queda pegado | Comprueba que tienes internet (la primera vez descarga mucho). Prueba *File → Sync Project with Gradle Files*. |
 | "SDK location not found" | Android Studio no encontró el SDK. Abre *File → Project Structure → SDK Location* y elige la carpeta del SDK, o deja que Android Studio lo instale. |
 | Pide instalar "Android SDK Platform 37" | Pulsa **Install** en el aviso y acepta. |
