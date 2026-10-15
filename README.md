@@ -14,16 +14,16 @@ clínico básico y recibir notificaciones sobre la atención en salud.
 
 ## 1. Estado actual del proyecto
 
-| # | Pantalla | Estado |
-|---|----------|--------|
-| 1 | Bienvenida | Hecha |
-| 2 | Registro de usuario | Hecha (solo valida los datos, no los guarda) |
-| 3 | Inicio de sesión | Hecha (solo valida el formato, no comprueba usuarios) |
+| # | Pantalla | Estado                                                                                                       |
+|---|----------|--------------------------------------------------------------------------------------------------------------|
+| 1 | Bienvenida | Hecha                                                                                                        |
+| 2 | Registro de usuario | Hecha (solo valida los datos, no los guarda)                                                                 |
+| 3 | Inicio de sesión | Hecha (solo valida el formato, no comprueba usuarios)                                                        |
 | 4 | Menú principal | Hecha ("Agendar cita" abre su pantalla; las demás tarjetas muestran "Esta sección estará disponible pronto") |
-| 5 | Directorio de centros de salud (con GPS) | Pendiente |
-| 6 | Agendamiento de citas | Hecha (solo la parte visual; el botón "Enviar" aún no guarda la cita) |
-| 7 | Historial médico | Pendiente |
-| 8 | Perfil y notificaciones | Pendiente |
+| 5 | Directorio de centros de salud (con GPS) | Pendiente                                                                                                    |
+| 6 | Agendamiento de citas | Hecha (el botón "Enviar" permite guardar la cita en el calendario de eleccion del usuario)                   |
+| 7 | Historial médico | Pendiente                                                                                                    |
+| 8 | Perfil y notificaciones | Pendiente                                                                                                    |
 
 **Todavía no existe base de datos.** Más adelante se usará SQLite para guardar usuarios, citas,
 historial de atenciones y centros de salud, de modo que la app se pueda consultar aunque haya poca

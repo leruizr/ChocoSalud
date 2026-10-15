@@ -5,18 +5,16 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     tools:context=".ActivityAgendarCita">
 
     <ScrollView
         android:id="@+id/Scrolldecita"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="0dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="10dp"
-        android:layout_marginBottom="10dp"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
+        app:layout_constraintBottom_toTopOf="@id/botonEnviar1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent">
@@ -30,7 +28,7 @@
                 android:layout_width="96dp"
                 android:layout_height="96dp"
                 android:layout_gravity="center_horizontal"
-                android:layout_marginTop="12sp"
+                android:layout_marginTop="12dp"
                 android:contentDescription="@string/logo_descripcion"
                 app:srcCompat="@drawable/logo_chocosalud" />
 
@@ -85,7 +83,7 @@
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/textcontacto"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent">
+                android:layout_height="wrap_content">
 
                 <com.google.android.material.textfield.TextInputEditText
                     android:id="@+id/inputcontacto"
@@ -112,14 +110,22 @@
                 android:layout_width="match_parent"
                 android:layout_height="311dp" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/botonRegistrar2"
-                android:layout_width="match_parent"
-                android:layout_height="56dp"
-                android:text="@string/Enviar"
-                android:textSize="16sp" />
-
         </LinearLayout>
     </ScrollView>
+
+    <com.google.android.material.button.MaterialButton
+        android:onClick="agendarCita"
+        android:id="@+id/botonEnviar1"
+        android:layout_width="0dp"
+        android:layout_height="56dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:text="@string/Enviar"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

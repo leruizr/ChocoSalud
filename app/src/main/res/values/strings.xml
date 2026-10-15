@@ -62,5 +62,9 @@
         <item>Pediatria</item>
         <item>Odontologia</item>
     </string-array>
+    <string name="cita_titulo_evento">Cita de %1$s - ChocóSalud</string>
+    <string name="cita_descripcion_evento">Teléfono de contacto: %1$s</string>
+    <string name="error_especialidad_requerida">Selecciona una especialidad</string>
+    <string name="error_sin_calendario">No se encontró una app de calendario en el teléfono</string>
 
 </resources>
