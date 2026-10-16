@@ -19,8 +19,8 @@ clínico básico y recibir notificaciones sobre la atención en salud.
 | 1 | Bienvenida | Hecha |
 | 2 | Registro de usuario | Hecha (solo valida los datos, no los guarda) |
 | 3 | Inicio de sesión | Hecha (solo valida el formato, no comprueba usuarios) |
-| 4 | Menú principal | Hecha ("Agendar cita" abre su pantalla; las demás tarjetas muestran "Esta sección estará disponible pronto") |
-| 5 | Directorio de centros de salud (con GPS) | Pendiente |
+| 4 | Menú principal | Hecha ("Centros de salud" y "Agendar cita" abren su pantalla; las demás tarjetas muestran "Esta sección estará disponible pronto") |
+| 5 | Directorio de centros de salud (con GPS) | Hecha (obtiene la ubicación actual y abre Google Maps) |
 | 6 | Agendamiento de citas | Hecha (solo la parte visual; el botón "Enviar" aún no guarda la cita) |
 | 7 | Historial médico | Pendiente |
 | 8 | Perfil y notificaciones | Pendiente |
@@ -133,9 +133,13 @@ Si solo quieres que otra persona pruebe la app:
    marca el campo en rojo. *Por ahora no guarda nada.* Para regresar pulsa **¿Ya tienes cuenta? Inicia
    sesión**.
 4. **Menú principal:** cuatro tarjetas (Centros de salud, Agendar cita, Historial médico, Perfil y
-   notificaciones). **Agendar cita** abre su pantalla; las otras tres todavía muestran el aviso "Esta
-   sección estará disponible pronto".
-5. **Agendar cita:** permite elegir la especialidad, escribir un teléfono de contacto y escoger la fecha
+   notificaciones). **Centros de salud** y **Agendar cita** abren su pantalla; las otras dos todavía
+   muestran el aviso "Esta sección estará disponible pronto".
+5. **Centros de salud (GPS):** pulsa **Obtener mi ubicación** y acepta el permiso de ubicación. La app
+   muestra tu latitud y longitud; con **Ver mi ubicación en el mapa** se abre Google Maps en ese punto.
+   Los botones de la clínica de Quibdó y del hospital de Tadó abren Google Maps en cada centro (desde
+   ahí puedes pulsar "Cómo llegar"). La ubicación del teléfono debe estar activada. *No usa API key.*
+6. **Agendar cita:** permite elegir la especialidad, escribir un teléfono de contacto y escoger la fecha
    en un calendario. *Por ahora es solo la parte visual: el botón "Enviar" aún no guarda la cita.*
 
 El botón **Atrás** del menú principal cierra la app (no vuelve al login).
@@ -156,6 +160,7 @@ Cada pantalla es una clase "Activity" (código) que va de la mano con un archivo
 | `ActivityInicioSesion.java` | Pantalla 3. Valida correo y contraseña; si están bien abre el menú (`iniciarSesion`). También enlaza al registro (`irRegistro`). |
 | `ActivityRegistroUsuario.java` | Pantalla 2. Valida los 6 campos del formulario (`registrarUsuario`) y permite volver al login (`irInicioSesion`). |
 | `ActivityMenuPrincipal.java` | Pantalla 4. Las cuatro tarjetas (`irCentrosSalud`, `irCitas`, `irHistorial`, `irPerfil`). `irCitas` abre Agendar cita; las demás muestran un aviso (`mostrarProximamente`). |
+| `ActivityCentrosSalud.java` | Pantalla 5 (servicio GPS). Pide el permiso de ubicación, obtiene la ubicación actual (`obtenerUbicacionActual`) y abre Google Maps con un Intent (`verMiUbicacion`, `abrirCentroQuibdo`, `abrirCentroTado`). |
 | `ActivityAgendarCita.java` | Pantalla 6. Agendar cita; por ahora solo carga su diseño (aún no tiene lógica). |
 | `AjusteTeclado.java` | Ayuda compartida: evita que el teclado del teléfono tape los campos de un formulario. La usan el login y el registro. |
 | `MainActivity.java` | Pantalla de ejemplo que trae Android Studio ("Hello World"). **No se usa**; se puede borrar más adelante. |
@@ -168,6 +173,7 @@ Cada pantalla es una clase "Activity" (código) que va de la mano con un archivo
 | `activity_inicio_sesion.xml` | Diseño de la pantalla 3 (correo, contraseña, botones). |
 | `activity_registro_usuario.xml` | Diseño de la pantalla 2 (formulario de registro). |
 | `activity_menu_principal.xml` | Diseño de la pantalla 4 (las cuatro tarjetas). |
+| `activity_centros_salud.xml` | Diseño de la pantalla 5 (botón de ubicación, texto con la ubicación y botones de los centros de salud). |
 | `activity_agendar_cita.xml` | Diseño de la pantalla 6 (especialidad, teléfono, calendario y botón "Enviar"). |
 | `activity_main.xml` | Diseño de `MainActivity` (no se usa). |
 

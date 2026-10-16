@@ -40,9 +40,10 @@ public class ActivityMenuPrincipal extends AppCompatActivity {
         });
     }
 
-    // MÉTODO: irCentrosSalud -> tarjeta "Centros de salud". Esa pantalla aún no existe: muestra un aviso.
+    // MÉTODO: irCentrosSalud -> tarjeta "Centros de salud". Abre la pantalla ActivityCentrosSalud (GPS).
     public void irCentrosSalud(View v) {
-        mostrarProximamente();
+        Intent intent = new Intent(this, ActivityCentrosSalud.class);
+        startActivity(intent);
     }
 
     // MÉTODO: irCitas -> tarjeta "Agendar cita". Abre la pantalla ActivityAgendarCita.
