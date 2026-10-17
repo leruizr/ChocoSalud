@@ -21,7 +21,7 @@ clínico básico y recibir notificaciones sobre la atención en salud.
 | 3 | Inicio de sesión | Hecha (solo valida el formato, no comprueba usuarios) |
 | 4 | Menú principal | Hecha ("Centros de salud" y "Agendar cita" abren su pantalla; las demás tarjetas muestran "Esta sección estará disponible pronto") |
 | 5 | Directorio de centros de salud (con GPS) | Hecha (obtiene la ubicación actual y abre Google Maps) |
-| 6 | Agendamiento de citas | Hecha (solo la parte visual; el botón "Enviar" aún no guarda la cita) |
+| 6 | Agendamiento de citas | Hecha (el botón "Enviar" permite guardar la cita en el calendario de eleccion del usuario) |
 | 7 | Historial médico | Pendiente |
 | 8 | Perfil y notificaciones | Pendiente |
 
