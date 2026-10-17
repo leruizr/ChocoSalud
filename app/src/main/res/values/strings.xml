@@ -46,6 +46,22 @@
     <string name="menu_perfil">Perfil y notificaciones</string>
     <string name="proximamente">Esta sección estará disponible pronto</string>
 
+    <!-- Centros de salud (GPS) -->
+    <string name="centros_titulo">Centros de salud</string>
+    <string name="centros_subtitulo">Consulta tu ubicación y abre la ruta hacia un centro de salud</string>
+    <string name="boton_obtener_ubicacion">Obtener mi ubicación</string>
+    <string name="boton_ver_mi_ubicacion">Ver mi ubicación en el mapa</string>
+    <string name="ubicacion_sin_obtener">Aún no se ha obtenido tu ubicación</string>
+    <string name="ubicacion_buscando">Buscando tu ubicación…</string>
+    <string name="ubicacion_actual">Tu ubicación actual: %1$.6f, %2$.6f</string>
+    <string name="ubicacion_no_disponible">No se pudo obtener la ubicación. Activa la ubicación del teléfono e intenta de nuevo.</string>
+    <string name="permiso_ubicacion_negado">Sin el permiso de ubicación no podemos mostrar dónde estás</string>
+    <string name="centros_lista_titulo">Centros de salud disponibles</string>
+    <string name="centro_quibdo">Clínica de los Especialistas del Chocó Reina Virgen María (Quibdó)</string>
+    <string name="centro_tado">Hospital San José de Tadó</string>
+    <string name="mi_ubicacion">Mi ubicación</string>
+    <string name="mapa_no_disponible">No hay una aplicación de mapas instalada</string>
+
     <!-- Compartidos -->
     <string name="datos_validos">Datos validados correctamente</string>
 

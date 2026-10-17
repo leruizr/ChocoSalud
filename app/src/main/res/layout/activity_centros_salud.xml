@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- DISEÑO de la pantalla 5: Centros de salud (lógica en ActivityCentrosSalud.java) -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".ActivityCentrosSalud">
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="24dp">
+
+            <!-- Logo -->
+            <ImageView
+                android:layout_width="96dp"
+                android:layout_height="96dp"
+                android:layout_gravity="center_horizontal"
+                android:contentDescription="@string/logo_descripcion"
+                android:src="@drawable/logo_chocosalud" />
+
+            <!-- Título y subtítulo -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:gravity="center"
+                android:text="@string/centros_titulo"
+                android:textColor="?attr/colorPrimary"
+                android:textSize="28sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="24dp"
+                android:gravity="center"
+                android:text="@string/centros_subtitulo"
+                android:textColor="?attr/colorOnBackground"
+                android:textSize="16sp" />
+
+            <!-- Botón GPS: llama al método obtenerUbicacionActual del Java -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/botonObtenerUbicacion"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:onClick="obtenerUbicacionActual"
+                android:text="@string/boton_obtener_ubicacion"
+                android:textSize="16sp" />
+
+            <!-- Aquí se muestra la latitud y longitud obtenidas -->
+            <TextView
+                android:id="@+id/textoUbicacion"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:gravity="center"
+                android:text="@string/ubicacion_sin_obtener"
+                android:textColor="?attr/colorOnBackground"
+                android:textSize="16sp" />
+
+            <!-- Abre Google Maps en la ubicación del usuario (desactivado hasta tener ubicación) -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/botonVerMiUbicacion"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginTop="12dp"
+                android:enabled="false"
+                android:onClick="verMiUbicacion"
+                android:text="@string/boton_ver_mi_ubicacion" />
+
+            <!-- Lista de centros de salud: cada botón abre Google Maps en ese centro -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:text="@string/centros_lista_titulo"
+                android:textColor="?attr/colorPrimary"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/botonCentroQuibdo"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:minHeight="56dp"
+                android:onClick="abrirCentroQuibdo"
+                android:text="@string/centro_quibdo" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/botonCentroTado"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:minHeight="56dp"
+                android:onClick="abrirCentroTado"
+                android:text="@string/centro_tado" />
+
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>
