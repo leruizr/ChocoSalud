@@ -95,6 +95,36 @@
             </com.google.android.material.textfield.TextInputLayout>
 
             <TextView
+                android:id="@+id/textoFormula"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="@string/formula_titulo"
+                android:textColor="@color/azul_chocosalud"
+                android:textStyle="bold"
+                tools:textSize="16sp" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/botonAdjuntarFoto"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="8dp"
+                android:onClick="adjuntarFoto"
+                android:text="@string/boton_adjuntar_foto"
+                android:textSize="16sp" />
+
+            <ImageView
+                android:id="@+id/imagenFormula"
+                android:layout_width="match_parent"
+                android:layout_height="200dp"
+                android:layout_marginBottom="16dp"
+                android:contentDescription="@string/formula_descripcion"
+                android:scaleType="fitCenter"
+                android:visibility="gone" />
+
+            <TextView
                 android:id="@+id/textView3"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

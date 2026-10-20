@@ -83,4 +83,12 @@
     <string name="error_especialidad_requerida">Selecciona una especialidad</string>
     <string name="error_sin_calendario">No se encontró una app de calendario en el teléfono</string>
 
+
+    <!-- Cámara (Agendar cita) -->
+    <string name="formula_titulo">Fórmula médica o documento (opcional):</string>
+    <string name="boton_adjuntar_foto">Tomar foto</string>
+    <string name="formula_descripcion">Foto de la fórmula médica adjunta</string>
+    <string name="foto_adjuntada">Foto adjuntada correctamente</string>
+    <string name="foto_cancelada">No se tomó ninguna foto</string>
+    <string name="error_sin_camara">No se encontró una aplicación de cámara en este dispositivo</string>
 </resources>
