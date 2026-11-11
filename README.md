@@ -25,9 +25,9 @@ clínico básico y recibir notificaciones sobre la atención en salud.
 | 7 | Historial médico | Pendiente |
 | 8 | Perfil y notificaciones | Pendiente |
 
-**Todavía no existe base de datos.** Más adelante se usará SQLite para guardar usuarios, citas,
-historial de atenciones y centros de salud, de modo que la app se pueda consultar aunque haya poca
-conexión. Los servicios previstos son: **GPS** (centros cercanos), **cámara** (adjuntar fotos de fórmulas
+**Base de datos SQLite.** Ya existe la clase `BaseDatos` con las
+tablas de usuarios, centros de salud y citas.
+Los servicios previstos son: **GPS** (centros cercanos), **cámara** (adjuntar fotos de fórmulas
 o documentos) y **notificaciones** (recordatorios de citas).
 
 ---
@@ -139,8 +139,8 @@ Si solo quieres que otra persona pruebe la app:
    muestra tu latitud y longitud; con **Ver mi ubicación en el mapa** se abre Google Maps en ese punto.
    Los botones de la clínica de Quibdó y del hospital de Tadó abren Google Maps en cada centro (desde
    ahí puedes pulsar "Cómo llegar"). La ubicación del teléfono debe estar activada. *No usa API key.*
-6. **Agendar cita:** permite elegir la especialidad, escribir un teléfono de contacto y escoger la fecha
-   en un calendario. *Por ahora es solo la parte visual: el botón "Enviar" aún no guarda la cita.*
+6. **Agendar cita:** permite elegir la especialidad, escribir un teléfono de contacto, tomar fotografia de la formula (o evidencia similar) y escoger la fecha
+   en un calendario. 
 
 El botón **Atrás** del menú principal cierra la app (no vuelve al login).
 
@@ -154,16 +154,17 @@ Las carpetas y archivos que **no** aparecen aquí son de configuración y normal
 
 Cada pantalla es una clase "Activity" (código) que va de la mano con un archivo de diseño (layout).
 
-| Archivo | Qué hace |
-|---------|----------|
-| `ActivityBienvenida.java` | Pantalla 1. Es la primera que se abre. El botón "Comenzar" (`irInicioSesion`) lleva al login. |
-| `ActivityInicioSesion.java` | Pantalla 3. Valida correo y contraseña; si están bien abre el menú (`iniciarSesion`). También enlaza al registro (`irRegistro`). |
-| `ActivityRegistroUsuario.java` | Pantalla 2. Valida los 6 campos del formulario (`registrarUsuario`) y permite volver al login (`irInicioSesion`). |
-| `ActivityMenuPrincipal.java` | Pantalla 4. Las cuatro tarjetas (`irCentrosSalud`, `irCitas`, `irHistorial`, `irPerfil`). `irCitas` abre Agendar cita; las demás muestran un aviso (`mostrarProximamente`). |
+| Archivo | Qué hace                                                                                                                                                                                                     |
+|---------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `ActivityBienvenida.java` | Pantalla 1. Es la primera que se abre. El botón "Comenzar" (`irInicioSesion`) lleva al login.                                                                                                                |
+| `ActivityInicioSesion.java` | Pantalla 3. Valida correo y contraseña; si están bien abre el menú (`iniciarSesion`). También enlaza al registro (`irRegistro`).                                                                             |
+| `ActivityRegistroUsuario.java` | Pantalla 2. Valida los 6 campos del formulario (`registrarUsuario`) y permite volver al login (`irInicioSesion`).                                                                                            |
+| `ActivityMenuPrincipal.java` | Pantalla 4. Las cuatro tarjetas (`irCentrosSalud`, `irCitas`, `irHistorial`, `irPerfil`). `irCitas` abre Agendar cita; las demás muestran un aviso (`mostrarProximamente`).                                  |
 | `ActivityCentrosSalud.java` | Pantalla 5 (servicio GPS). Pide el permiso de ubicación, obtiene la ubicación actual (`obtenerUbicacionActual`) y abre Google Maps con un Intent (`verMiUbicacion`, `abrirCentroQuibdo`, `abrirCentroTado`). |
-| `ActivityAgendarCita.java` | Pantalla 6. Agendar cita; por ahora solo carga su diseño (aún no tiene lógica). |
-| `AjusteTeclado.java` | Ayuda compartida: evita que el teclado del teléfono tape los campos de un formulario. La usan el login y el registro. |
-| `MainActivity.java` | Pantalla de ejemplo que trae Android Studio ("Hello World"). **No se usa**; se puede borrar más adelante. |
+| `ActivityAgendarCita.java` | Pantalla 6. Agendar cita; Permite guardar en la agenda(calendario) del dispositivo movil, y guardar la cita en `citas`.                                                                                             |
+| `AjusteTeclado.java` | Ayuda compartida: evita que el teclado del teléfono tape los campos de un formulario. La usan el login y el registro.                                                                                        |
+| `MainActivity.java` | Pantalla de ejemplo que trae Android Studio ("Hello World"). **No se usa**; se puede borrar más adelante.                                                                                                    |
+| `BaseDatos.java` | Base de datos SQLite (`chocosalud.db`): crea las tablas `usuarios`, `centros_salud` y `citas`, y agrega los dos centros iniciales.                                                                           |
 
 ### 6.2 Diseños de pantalla (`app/src/main/res/layout/`)
 
@@ -328,3 +329,89 @@ Recomendaciones:
 - **Versión mínima de Android:** 7.0 (API 24) · **Versión objetivo:** API 37
 - **Paquete:** `com.example.chocosalud`
 - **Herramientas:** Android Gradle Plugin 9.3.3 · Gradle 9.5.0
+- **Base de datos:** SQLite con `SQLiteOpenHelper` (archivo `chocosalud.db`, versión 1)
+
+---
+
+## 11. Base de datos SQLite (Fase 4)
+
+La app guarda sus datos en una base de datos **SQLite** dentro del teléfono (archivo `chocosalud.db`), así
+la información se conserva aunque se cierre la app o no haya internet. Toda la base de datos se maneja
+desde una sola clase: **`BaseDatos.java`**.
+
+### 11.1 Tablas
+
+**`usuarios`**: las personas registradas.
+
+| Columna | Tipo | Notas |
+|---------|------|-------|
+| `_id` | INTEGER | Llave primaria, la asigna SQLite |
+| `nombre` | TEXT | Obligatorio |
+| `documento` | TEXT | Obligatorio, **único** (no se repite) |
+| `correo` | TEXT | Obligatorio, **único**; se usa para iniciar sesión |
+| `telefono` | TEXT | Obligatorio |
+| `contrasena` | TEXT | Obligatorio. Se guarda el **hash SHA-256**, nunca la contraseña tal cual |
+
+**`centros_salud`**: clínicas y hospitales. Al crear la base de datos se agregan los dos centros que
+ya mostraba la app (Quibdó y Tadó).
+
+| Columna | Tipo | Notas |
+|---------|------|-------|
+| `_id` | INTEGER | Llave primaria |
+| `nombre` | TEXT | Obligatorio |
+| `municipio` | TEXT | Obligatorio |
+| `direccion` | TEXT | Opcional |
+| `telefono` | TEXT | Opcional |
+| `latitud` | REAL | Obligatorio (número con decimales) |
+| `longitud` | REAL | Obligatorio |
+
+**`citas`**: las citas agendadas. **Esta tabla es también el historial médico** del usuario.
+
+| Columna | Tipo | Notas |
+|---------|------|-------|
+| `_id` | INTEGER | Llave primaria |
+| `usuario_id` | INTEGER | Llave foránea → `usuarios._id`. Si se borra el usuario, se borran sus citas |
+| `centro_id` | INTEGER | Llave foránea → `centros_salud._id` |
+| `especialidad` | TEXT | Obligatorio |
+| `telefono` | TEXT | Teléfono de contacto de la cita |
+| `fecha` | TEXT | Formato `yyyy-MM-dd` (ej. `2026-11-20`), para poder ordenar por fecha |
+| `creada_en` | TEXT | Fecha y hora de creación; la pone SQLite sola |
+
+### 11.2 Plan de implementación:
+
+| # | Paso | Pantallas                                                | Operación SQL | Estado |
+|---|------|----------------------------------------------------------|---------------|--------|
+| 0 | Crear la base de datos y las tablas | `BaseDatos.java`                                         | CREATE TABLE | Hecho |
+| 1 | Registro e inicio de sesión reales | Registro, Inicio de sesión                               | INSERT, SELECT | Pendiente |
+| 2 | Ver y editar el perfil | Perfil y notificaciones (pantalla 8)                     | SELECT, UPDATE | Pendiente |
+| 3 | Agregar clínicas | Centros de salud (pantalla 5)                            | INSERT, SELECT | Pendiente |
+| 4 | Elegir clínica al agendar y ver el historial | Agendar cita (pantalla 6), Historial médico (pantalla 7) | INSERT, SELECT | Pendiente |
+
+1. **Registro e inicio de sesión.** El formulario de registro (desde *"¿No tienes cuenta? Regístrate"*)
+   guarda el usuario en la tabla `usuarios`. Si el correo o el documento ya existen, avisa. Para entrar a
+   la app es **obligatorio** iniciar sesión con un correo y una contraseña que estén guardados en la base
+   de datos. Al iniciar sesión se recuerda el `_id` del usuario para que las demás pantallas sepan quién
+   está conectado.
+2. **Perfil y notificaciones.** Muestra los datos del usuario conectado y permite **editar** nombre,
+   correo, teléfono, contraseña y demás datos.
+3. **Centros de salud.** Se agrega un botón **"Agregar clínica"** que guarda en `centros_salud` el nombre,
+   municipio, latitud, longitud y demás datos. La lista de centros se lee desde la tabla (ya no queda
+   escrita en el código).
+4. **Agendar cita e historial.** Se agrega un **desplegable para elegir la clínica** (leído de
+   `centros_salud`). Al pulsar **Enviar** hace lo mismo que hoy (abre el calendario del teléfono) y
+   además **guarda la cita** en `citas`. La pantalla **Historial médico** lista las citas del usuario.
+
+### 11.3 Reglas para trabajar con la base de datos
+
+- **Usar las constantes** de `BaseDatos` (`TABLA_USUARIOS`, `USUARIO_CORREO`…) en vez de
+  escribir los nombres a mano.
+- **Nunca armar el SQL pegando textos con `+`** con datos que escribe el usuario. Usar `ContentValues`
+  para insertar o actualizar, y `?` en las consultas
+  (`rawQuery("... WHERE correo = ?", new String[]{correo})`). Así se evita la **inyección SQL**.
+- **Si se cambia una tabla**, subir `VERSION` en `BaseDatos.java`. `onCreate` solo
+  corre la primera vez; si no se sube la versión, en los teléfonos que ya tenían la app aparecerán errores
+  como "no such column". Otra opción mientras se desarrolla: desinstalar la app del teléfono.
+- **El archivo se crea la primera vez que una pantalla abre la base de datos** (`getWritableDatabase()` o
+  `getReadableDatabase()`), no al instalar la app.
+- **Para ver las tablas y los datos en vivo:** ejecuta la app y abre en Android Studio
+  *View → Tool Windows → App Inspection → Database Inspector*.
