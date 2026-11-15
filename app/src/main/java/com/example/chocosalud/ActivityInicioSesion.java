@@ -18,11 +18,14 @@ import com.google.android.material.textfield.TextInputLayout;
  * CLASE: ActivityInicioSesion  ->  PANTALLA 3 (Inicio de sesión)
  *
  * - El usuario escribe correo y contraseña y pulsa "Ingresar".
- * - Si los datos tienen buen formato, se abre el menú principal.
- * - Todavía NO hay base de datos: solo se revisa el formato, no si el usuario existe.
+ * - Primero revisa el formato; luego busca en la base de datos (tabla usuarios) un usuario con
+ * - ese correo y esa contraseña. Solo si existe, guarda la sesión y abre el menú principal.
  * - Su diseño visual está en: res/layout/activity_inicio_sesion.xml
  */
 public class ActivityInicioSesion extends AppCompatActivity {
+
+    // VARIABLE: baseDatos -> acceso a la base de datos SQLite de la app.
+    private BaseDatos baseDatos;
 
     // CONSTANTE: LONGITUD_CONTRASENA -> la contraseña debe tener 4 caracteres.
     // "static final" = su valor nunca cambia.
@@ -57,15 +60,40 @@ public class ActivityInicioSesion extends AppCompatActivity {
         layoutContrasena = findViewById(R.id.layoutContrasena);
         campoCorreo = findViewById(R.id.campoCorreo);
         campoContrasena = findViewById(R.id.campoContrasena);
+
+        baseDatos = new BaseDatos(this);
+    }
+
+    /*
+     * MÉTODO: onDestroy
+     * - Android lo llama cuando se cierra la pantalla. Se cierra la base de datos para liberarla.
+     */
+    @Override
+    protected void onDestroy() {
+        baseDatos.close();
+        super.onDestroy();
     }
 
     /*
      * MÉTODO: iniciarSesion
      * - Se ejecuta al tocar "Ingresar" (android:onClick="iniciarSesion" en el XML).
-     * - Si el formulario está bien, abre el menú principal.
+     * - Si el formulario está bien y el usuario existe en la base de datos, abre el menú principal.
      */
     public void iniciarSesion(View v) {
         if (formularioValido()) {
+            // Busca el usuario en la tabla usuarios (SELECT). Devuelve su _id o SIN_USUARIO.
+            long usuarioId = baseDatos.iniciarSesion(
+                    obtenerTexto(campoCorreo), obtenerTexto(campoContrasena));
+
+            if (usuarioId == BaseDatos.SIN_USUARIO) {
+                // No se dice cuál de los dos está mal: así nadie puede averiguar qué correos existen.
+                layoutContrasena.setError(getString(R.string.error_credenciales));
+                return; // return: termina el método aquí, no abre el menú.
+            }
+
+            // Recuerda quién inició sesión, para las pantallas de perfil, citas e historial.
+            Sesion.iniciar(this, usuarioId);
+
             // VARIABLE local: intent -> orden de abrir el menú principal.
             Intent intent = new Intent(this, ActivityMenuPrincipal.class);
 

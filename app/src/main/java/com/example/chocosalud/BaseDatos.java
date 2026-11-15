@@ -5,6 +5,12 @@ import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
+import android.database.Cursor;
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
+import java.util.Locale;
+
 
 public class BaseDatos extends SQLiteOpenHelper {
 
@@ -64,7 +70,9 @@ public class BaseDatos extends SQLiteOpenHelper {
                     + CITA_CREADA_EN + " TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP)";
 
     // VARIABLE: contexto -> se guarda para poder leer textos de strings.xml en onCreate.
+    // CONSTANTE: SIN_USUARIO -> lo que devuelven registrarUsuario e iniciarSesion cuando no hay
     private final Context contexto;
+    public static final long SIN_USUARIO = -1;
 
     public BaseDatos(Context contexto) {
         super(contexto, NOMBRE, null, VERSION);
@@ -118,4 +126,107 @@ public class BaseDatos extends SQLiteOpenHelper {
         valores.put(CENTRO_LONGITUD, longitud);
         db.insert(TABLA_CENTROS, null, valores);
     }
+
+    /*
+     * MÉTODO: registrarUsuario (INSERT)
+     * - Guarda un usuario nuevo en la tabla usuarios.
+     * - La contraseña NO se guarda tal cual: se guarda su hash (ver calcularHash).
+     * - DEVUELVE: el _id del usuario nuevo, o SIN_USUARIO si no se pudo guardar.
+     */
+    public long registrarUsuario(String nombre, String documento, String correo,
+                                 String telefono, String contrasena) {
+        // ContentValues: "caja" de pares columna -> valor. insert arma el SQL por nosotros,
+        // así los datos que escribe el usuario nunca se pegan dentro del SQL (evita inyección SQL).
+        ContentValues valores = new ContentValues();
+        valores.put(USUARIO_NOMBRE, nombre);
+        valores.put(USUARIO_DOCUMENTO, documento);
+        valores.put(USUARIO_CORREO, normalizarCorreo(correo));
+        valores.put(USUARIO_TELEFONO, telefono);
+        valores.put(USUARIO_CONTRASENA, calcularHash(contrasena));
+
+        // getWritableDatabase(): abre la base de datos para ESCRIBIR. La primera vez que se llama,
+        // Android crea el archivo chocosalud.db y ejecuta onCreate.
+        // insert devuelve el _id de la fila nueva, o -1 si falló (por ejemplo, correo repetido).
+        return getWritableDatabase().insert(TABLA_USUARIOS, null, valores);
+    }
+
+    /*
+     * MÉTODO: iniciarSesion  (SELECT)
+     * - Busca un usuario con ese correo y esa contraseña.
+     * - DEVUELVE: el _id del usuario si los datos coinciden, o SIN_USUARIO si no.
+     */
+    public long iniciarSesion(String correo, String contrasena) {
+        // Los "?" son espacios que SQLite llena con los valores del arreglo, EN ORDEN.
+        // Se compara el hash de lo escrito con el hash guardado: así nunca se necesita
+        // la contraseña original.
+        String sql = "SELECT " + USUARIO_ID + " FROM " + TABLA_USUARIOS
+                + " WHERE " + USUARIO_CORREO + " = ? AND " + USUARIO_CONTRASENA + " = ?";
+        String[] argumentos = {normalizarCorreo(correo), calcularHash(contrasena)};
+
+        // Cursor: el resultado de la consulta, se recorre fila por fila.
+        // try (...) { } cierra el cursor solo al terminar, aunque ocurra un error.
+        try (Cursor cursor = getReadableDatabase().rawQuery(sql, argumentos)) {
+            // moveToFirst() devuelve true si hay al menos una fila (el usuario existe).
+            if (cursor.moveToFirst()) {
+                return cursor.getLong(0); // columna 0 = _id (es la única que se pidió)
+            }
+        }
+        return SIN_USUARIO;
+    }
+
+        // MÉTODO: existeCorreo -> true si ya hay un usuario registrado con ese correo.
+        public boolean existeCorreo(String correo) {
+            return existeValor(USUARIO_CORREO, normalizarCorreo(correo));
+        }
+
+        // MÉTODO: existeDocumento -> true si ya hay un usuario registrado con ese documento.
+        public boolean existeDocumento(String documento) {
+            return existeValor(USUARIO_DOCUMENTO, documento);
+        }
+
+        /*
+         * MÉTODO: existeValor  (SELECT)
+         * - Revisa si en la tabla usuarios hay alguna fila con ese valor en esa columna.
+         * - "columna" siempre es una constante de esta clase (nunca algo que escribe el usuario),
+         *   por eso se puede pegar en el SQL; el valor sí va con "?".
+         */
+        private boolean existeValor(String columna, String valor) {
+            String sql = "SELECT 1 FROM " + TABLA_USUARIOS + " WHERE " + columna + " = ? LIMIT 1";
+            try (Cursor cursor = getReadableDatabase().rawQuery(sql, new String[]{valor})) {
+                return cursor.moveToFirst();
+            }
+        }
+
+        /*
+         * MÉTODO: normalizarCorreo
+         * - Quita espacios y pasa el correo a minúsculas, para que "Ana@Correo.com" y "ana@correo.com"
+         *   se consideren el mismo correo al registrarse y al iniciar sesión.
+         */
+        private static String normalizarCorreo(String correo) {
+            return correo.trim().toLowerCase(Locale.ROOT);
+        }
+
+        /*
+         * MÉTODO: calcularHash
+         * - Convierte la contraseña en su hash SHA-256: un código de 64 caracteres que no se puede
+         *   "devolver" a la contraseña original. La misma contraseña siempre da el mismo hash, por eso
+         *   sirve para comparar al iniciar sesión.
+         * - Así, si alguien copia el archivo chocosalud.db, no puede leer las contraseñas.
+         */
+        private static String calcularHash(String contrasena) {
+            try {
+                MessageDigest sha256 = MessageDigest.getInstance("SHA-256");
+                byte[] bytes = sha256.digest(contrasena.getBytes(StandardCharsets.UTF_8));
+
+                // El resultado son 32 bytes; cada byte se escribe como 2 caracteres hexadecimales (0-9, a-f).
+                StringBuilder hash = new StringBuilder();
+                for (byte b : bytes) {
+                    hash.append(String.format("%02x", b));
+                }
+                return hash.toString();
+            } catch (NoSuchAlgorithmException e) {
+                // Todos los Android traen SHA-256, así que esto no debería pasar nunca.
+                throw new IllegalStateException("SHA-256 no está disponible", e);
+            }
+        }
 }

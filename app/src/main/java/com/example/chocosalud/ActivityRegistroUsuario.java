@@ -19,10 +19,14 @@ import com.google.android.material.textfield.TextInputLayout;
  *
  * - Formulario de 6 campos: nombre, documento, correo, teléfono, contraseña y confirmación.
  * - Al tocar "Registrarme" revisa los datos y marca en rojo los que estén mal.
- * - Todavía NO guarda nada (la base de datos SQLite se agrega más adelante).
+ * - Si está bien, guarda el usuario en la base de datos (tabla usuarios) y vuelve al login,
+ *   donde debe iniciar sesión con el correo y la contraseña que acaba de registrar.
  * - Su diseño visual está en: res/layout/activity_registro_usuario.xml
  */
 public class ActivityRegistroUsuario extends AppCompatActivity {
+
+    // VARIABLE: baseDatos -> acceso a la base de datos SQLite de la app.
+    private BaseDatos baseDatos;
 
     // CONSTANTE: LONGITUD_CONTRASENA -> la contraseña debe tener 4 caracteres.
     private static final int LONGITUD_CONTRASENA = 4;
@@ -67,18 +71,64 @@ public class ActivityRegistroUsuario extends AppCompatActivity {
         campoTelefono = findViewById(R.id.campoTelefono);
         campoContrasena = findViewById(R.id.campoContrasena);
         campoConfirmarContrasena = findViewById(R.id.campoConfirmarContrasena);
+        baseDatos = new BaseDatos(this);
+    }
+
+    /*
+     * MÉTODO: onDestroy
+     * - Android lo llama cuando se cierra la pantalla. Se cierra la base de datos para liberarla.
+     */
+    @Override
+    protected void onDestroy() {
+        baseDatos.close();
+        super.onDestroy();
     }
 
     /*
      * MÉTODO: registrarUsuario
      * - Se ejecuta al tocar "Registrarme" (android:onClick="registrarUsuario" en el XML).
-     * - Si todo está bien muestra un mensaje. Aquí se guardará el usuario cuando exista la base de datos.
+     * - Si está bien, guarda el usuario en la base de datos y vuelve al login.
      */
     public void registrarUsuario(View v) {
-        if (formularioValido()) {
-            // Toast = mensaje corto que aparece abajo unos segundos.
-            Toast.makeText(this, R.string.datos_validos, Toast.LENGTH_SHORT).show();
+        if (formularioValido() && datosDisponibles()) {
+            // Guarda el usuario en la tabla usuarios (INSERT). Devuelve su _id o SIN_USUARIO.
+            long usuarioId = baseDatos.registrarUsuario(
+                    obtenerTexto(campoNombreCompleto),
+                    obtenerTexto(campoDocumento),
+                    obtenerTexto(campoCorreo),
+                    obtenerTexto(campoTelefono),
+                    obtenerTexto(campoContrasena));
+
+            if (usuarioId == BaseDatos.SIN_USUARIO) {
+                Toast.makeText(this, R.string.error_registro, Toast.LENGTH_LONG).show();
+            } else {
+                // Toast = mensaje corto que aparece abajo unos segundos.
+                Toast.makeText(this, R.string.registro_exitoso, Toast.LENGTH_LONG).show();
+                // finish() cierra el registro y vuelve al login: ahí debe iniciar sesión.
+                finish();
+            }
         }
+    }
+
+    /*
+     * MÉTODO: datosDisponibles
+     * - Revisa en la base de datos que el correo y el documento no estén ya registrados.
+     *   (En la tabla son UNIQUE: si se repiten, el INSERT fallaría.)
+     * - DEVUELVE: true si los dos están libres, false si alguno ya existe.
+     */
+    private boolean datosDisponibles() {
+        boolean disponibles = true;
+
+        if (baseDatos.existeCorreo(obtenerTexto(campoCorreo))) {
+            layoutCorreo.setError(getString(R.string.error_correo_registrado));
+            disponibles = false;
+        }
+
+        if (baseDatos.existeDocumento(obtenerTexto(campoDocumento))) {
+            layoutDocumento.setError(getString(R.string.error_documento_registrado));
+            disponibles = false;
+        }
+        return disponibles;
     }
 
     /*
