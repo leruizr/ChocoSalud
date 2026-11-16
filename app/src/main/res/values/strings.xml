@@ -97,4 +97,27 @@
     <string name="foto_adjuntada">Foto adjuntada correctamente</string>
     <string name="foto_cancelada">No se tomó ninguna foto</string>
     <string name="error_sin_camara">No se encontró una aplicación de cámara en este dispositivo</string>
+
+    <!-- CRUD de citas (Fase 4, SQLite) -->
+    <string name="centro_salud">Centro de salud:</string>
+    <string name="boton_mis_citas">Ver mis citas</string>
+    <string name="boton_guardar_cambios">Guardar cambios</string>
+    <string name="editar_cita_titulo">Editar cita</string>
+    <string name="cita_guardada">Cita guardada</string>
+    <string name="cita_actualizada">Cita actualizada</string>
+    <string name="cita_cancelada">Cita cancelada</string>
+    <string name="error_guardar_cita">No se pudo guardar la cita. Intenta de nuevo</string>
+    <string name="error_sin_sesion">Debes iniciar sesión para agendar una cita</string>
+
+    <!-- Mis citas -->
+    <string name="mis_citas_titulo">Mis citas</string>
+    <string name="mis_citas_subtitulo">Toca una cita para editarla o cancelarla</string>
+    <string name="mis_citas_vacio">Aún no tienes citas agendadas</string>
+    <string name="opciones_cita_titulo">¿Qué deseas hacer con esta cita?</string>
+    <string name="opcion_editar">Editar</string>
+    <string name="opcion_cancelar_cita">Cancelar cita</string>
+    <string name="confirmar_cancelar_titulo">Cancelar cita</string>
+    <string name="confirmar_cancelar_mensaje">¿Seguro que deseas cancelar esta cita? Esta acción no se puede deshacer.</string>
+    <string name="boton_si_cancelar">Sí, cancelar</string>
+    <string name="boton_no">No</string>
 </resources>

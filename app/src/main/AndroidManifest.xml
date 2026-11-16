@@ -61,6 +61,10 @@
             android:name=".ActivityAgendarCita"
             android:exported="false"
             android:windowSoftInputMode="adjustResize" />
+        <!-- Mis citas: lista, edición y cancelación de citas (Fase 4, SQLite) -->
+        <activity
+            android:name=".ActivityMisCitas"
+            android:exported="false" />
         <!-- Pantalla 5: Centros de salud (usa el GPS) -->
         <activity
             android:name=".ActivityCentrosSalud"

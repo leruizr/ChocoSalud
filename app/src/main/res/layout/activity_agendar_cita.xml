@@ -33,6 +33,7 @@
                 app:srcCompat="@drawable/logo_chocosalud" />
 
             <TextView
+                android:id="@+id/tituloCita"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
@@ -69,6 +70,24 @@
                 android:backgroundTintMode="src_in"
                 android:drawingCacheQuality="auto"
                 android:entries="@array/opciones_citas" />
+
+            <!-- Centro de salud: se llena desde la tabla centros_salud (Fase 4, SQLite) -->
+            <TextView
+                android:id="@+id/textoCentro"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:text="@string/centro_salud"
+                android:textColor="@color/azul_chocosalud"
+                android:textStyle="bold"
+                tools:textSize="16sp" />
+
+            <Spinner
+                android:id="@+id/selectorCentro"
+                style="@android:style/Widget.Material.Spinner.Underlined"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="50dp" />
 
             <TextView
                 android:id="@+id/textView2"
@@ -150,8 +169,25 @@
         android:layout_height="56dp"
         android:layout_marginStart="16dp"
         android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
+        android:layout_marginBottom="4dp"
         android:text="@string/Enviar"
+        android:textSize="16sp"
+        app:layout_constraintBottom_toTopOf="@id/botonMisCitas"
+        app:layout_goneMarginBottom="16dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <!-- Abre la pantalla "Mis citas" (lista de citas guardadas en SQLite) -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/botonMisCitas"
+        style="@style/Widget.Material3.Button.TextButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="16dp"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="8dp"
+        android:onClick="verMisCitas"
+        android:text="@string/boton_mis_citas"
         android:textSize="16sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

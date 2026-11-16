@@ -229,4 +229,103 @@ public class BaseDatos extends SQLiteOpenHelper {
                 throw new IllegalStateException("SHA-256 no está disponible", e);
             }
         }
+
+    // =====================================================================================
+    // CRUD DE CITAS (Fase 4)
+    // C = Crear (INSERT) -> agendarCita
+    // R = Leer  (SELECT) -> consultarCitas y consultarCita
+    // U = Actualizar (UPDATE) -> actualizarCita
+    // D = Borrar (DELETE) -> cancelarCita
+    // =====================================================================================
+
+    // CONSTANTE: SIN_CITA -> lo que devuelve agendarCita cuando no se pudo guardar.
+    public static final long SIN_CITA = -1;
+
+    /*
+     * MÉTODO: consultarCentros  (SELECT)
+     * - Trae los centros de salud para el selector "Centro de salud" de Agendar cita.
+     * - DEVUELVE: un Cursor con las columnas _id y nombre.
+     */
+    public Cursor consultarCentros() {
+        String sql = "SELECT " + CENTRO_ID + ", " + CENTRO_NOMBRE + " FROM " + TABLA_CENTROS
+                + " ORDER BY " + CENTRO_NOMBRE;
+        return getReadableDatabase().rawQuery(sql, null);
+    }
+
+    /*
+     * MÉTODO: agendarCita  (INSERT -> C del CRUD)
+     * - Guarda una cita nueva del usuario que inició sesión.
+     * - DEVUELVE: el _id de la cita nueva, o SIN_CITA si no se pudo guardar.
+     */
+    public long agendarCita(long usuarioId, long centroId, String especialidad,
+                            String telefono, String fecha) {
+        ContentValues valores = new ContentValues();
+        valores.put(CITA_USUARIO_ID, usuarioId);
+        valores.put(CITA_CENTRO_ID, centroId);
+        valores.put(CITA_ESPECIALIDAD, especialidad);
+        valores.put(CITA_TELEFONO, telefono);
+        valores.put(CITA_FECHA, fecha);
+        return getWritableDatabase().insert(TABLA_CITAS, null, valores);
+    }
+
+    /*
+     * MÉTODO: consultarCitas  (SELECT -> R del CRUD)
+     * - Trae todas las citas de un usuario, ordenadas por fecha, para la lista de "Mis citas".
+     * - JOIN: une la tabla citas con centros_salud para mostrar el NOMBRE del centro
+     *   en vez de su número (centro_id).
+     * - DEVUELVE: un Cursor con las columnas _id, titulo (especialidad - fecha) y centro.
+     */
+    public Cursor consultarCitas(long usuarioId) {
+        String sql = "SELECT c." + CITA_ID + ", "
+                + "c." + CITA_ESPECIALIDAD + " || ' - ' || c." + CITA_FECHA + " AS titulo, "
+                + "ce." + CENTRO_NOMBRE + " AS centro "
+                + "FROM " + TABLA_CITAS + " c "
+                + "JOIN " + TABLA_CENTROS + " ce ON ce." + CENTRO_ID + " = c." + CITA_CENTRO_ID + " "
+                + "WHERE c." + CITA_USUARIO_ID + " = ? "
+                + "ORDER BY c." + CITA_FECHA;
+        return getReadableDatabase().rawQuery(sql, new String[]{String.valueOf(usuarioId)});
+    }
+
+    /*
+     * MÉTODO: consultarCita  (SELECT -> R del CRUD)
+     * - Trae UNA cita, para llenar el formulario cuando el usuario la va a editar.
+     * - Se filtra también por usuario: así nadie puede abrir la cita de otra persona.
+     * - DEVUELVE: un Cursor con centro_id, especialidad, telefono y fecha.
+     */
+    public Cursor consultarCita(long citaId, long usuarioId) {
+        String sql = "SELECT " + CITA_CENTRO_ID + ", " + CITA_ESPECIALIDAD + ", "
+                + CITA_TELEFONO + ", " + CITA_FECHA + " FROM " + TABLA_CITAS
+                + " WHERE " + CITA_ID + " = ? AND " + CITA_USUARIO_ID + " = ?";
+        return getReadableDatabase().rawQuery(sql,
+                new String[]{String.valueOf(citaId), String.valueOf(usuarioId)});
+    }
+
+    /*
+     * MÉTODO: actualizarCita  (UPDATE -> U del CRUD)
+     * - Cambia los datos de una cita que ya existe.
+     * - DEVUELVE: cuántas filas se cambiaron (1 si salió bien, 0 si no encontró la cita).
+     */
+    public int actualizarCita(long citaId, long usuarioId, long centroId, String especialidad,
+                              String telefono, String fecha) {
+        ContentValues valores = new ContentValues();
+        valores.put(CITA_CENTRO_ID, centroId);
+        valores.put(CITA_ESPECIALIDAD, especialidad);
+        valores.put(CITA_TELEFONO, telefono);
+        valores.put(CITA_FECHA, fecha);
+        // update(tabla, valores nuevos, condición WHERE, valores de los "?")
+        return getWritableDatabase().update(TABLA_CITAS, valores,
+                CITA_ID + " = ? AND " + CITA_USUARIO_ID + " = ?",
+                new String[]{String.valueOf(citaId), String.valueOf(usuarioId)});
+    }
+
+    /*
+     * MÉTODO: cancelarCita  (DELETE -> D del CRUD)
+     * - Borra una cita del usuario.
+     * - DEVUELVE: cuántas filas se borraron (1 si salió bien, 0 si no encontró la cita).
+     */
+    public int cancelarCita(long citaId, long usuarioId) {
+        return getWritableDatabase().delete(TABLA_CITAS,
+                CITA_ID + " = ? AND " + CITA_USUARIO_ID + " = ?",
+                new String[]{String.valueOf(citaId), String.valueOf(usuarioId)});
+    }
 }
