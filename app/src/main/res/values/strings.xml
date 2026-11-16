@@ -32,11 +32,17 @@
     <string name="error_contrasenas_distintas">Las contraseñas no coinciden</string>
     <string name="registro_con_cuenta">¿Ya tienes cuenta? Inicia sesión</string>
 
+    <string name="error_correo_registrado">Este correo ya está registrado</string>
+    <string name="error_documento_registrado">Este documento ya está registrado</string>
+    <string name="error_registro">No se pudo crear la cuenta. Intenta de nuevo</string>
+    <string name="registro_exitoso">Cuenta creada. Ahora inicia sesión con tu correo y contraseña</string>
+
     <!-- Inicio de sesión -->
     <string name="login_titulo">Iniciar sesión</string>
     <string name="login_subtitulo">Ingresa con tu correo y contraseña</string>
     <string name="boton_ingresar">Ingresar</string>
     <string name="login_sin_cuenta">¿No tienes cuenta? Regístrate</string>
+    <string name="error_credenciales">Correo o contraseña incorrectos</string>
 
     <!-- Menú principal -->
     <string name="menu_subtitulo">¿Qué deseas hacer hoy?</string>

@@ -17,8 +17,8 @@ clínico básico y recibir notificaciones sobre la atención en salud.
 | # | Pantalla | Estado |
 |---|----------|--------|
 | 1 | Bienvenida | Hecha |
-| 2 | Registro de usuario | Hecha (solo valida los datos, no los guarda) |
-| 3 | Inicio de sesión | Hecha (solo valida el formato, no comprueba usuarios) |
+| 2 | Registro de usuario | Hecha (guarda el usuario en la base de datos) |
+| 3 | Inicio de sesión | Hecha (solo entran usuarios registrados en la base de datos) |
 | 4 | Menú principal | Hecha ("Centros de salud" y "Agendar cita" abren su pantalla; las demás tarjetas muestran "Esta sección estará disponible pronto") |
 | 5 | Directorio de centros de salud (con GPS) | Hecha (obtiene la ubicación actual y abre Google Maps) |
 | 6 | Agendamiento de citas | Hecha (el botón "Enviar" permite guardar la cita en el calendario de eleccion del usuario) |
@@ -26,7 +26,7 @@ clínico básico y recibir notificaciones sobre la atención en salud.
 | 8 | Perfil y notificaciones | Pendiente |
 
 **Base de datos SQLite.** Ya existe la clase `BaseDatos` con las
-tablas de usuarios, centros de salud y citas.
+tablas de usuarios, centros de salud y citas. El registro y el inicio de sesión ya la usan
 Los servicios previstos son: **GPS** (centros cercanos), **cámara** (adjuntar fotos de fórmulas
 o documentos) y **notificaciones** (recordatorios de citas).
 
@@ -124,14 +124,14 @@ Si solo quieres que otra persona pruebe la app:
 ## 5. Cómo se usa la app
 
 1. **Bienvenida:** verás el logo y el botón **Comenzar**.
-2. **Inicio de sesión:** escribe un correo con formato válido (por ejemplo `prueba@correo.com`) y una
-   contraseña de **4 caracteres** (letras o números, por ejemplo `ab12`). Pulsa **Ingresar**.
-   *Por ahora no hay base de datos, así que entra cualquier correo válido con una contraseña de 4
-   caracteres.*
+2. **Inicio de sesión:** escribe el correo y la contraseña (**4 caracteres**) con los que te registraste
+   y pulsa **Ingresar**. Si no coinciden con un usuario guardado, la app muestra "Correo o contraseña
+   incorrectos". *La primera vez no hay usuarios: primero regístrate.*
 3. **Registro:** desde el login pulsa **¿No tienes cuenta? Regístrate**. Llena nombre, documento, correo,
    teléfono y contraseña (4 caracteres, repetida en "Confirmar contraseña"). Si algo está mal, la app
-   marca el campo en rojo. *Por ahora no guarda nada.* Para regresar pulsa **¿Ya tienes cuenta? Inicia
-   sesión**.
+   marca el campo en rojo. si el correo o el documento ya están registrados, también lo avisa. Al pulsar
+   **Registrarme** se guarda el usuario y la app vuelve al login para que inicies sesión. Para regresar
+   sin registrarte pulsa **¿Ya tienes cuenta? Inicia sesión**.
 4. **Menú principal:** cuatro tarjetas (Centros de salud, Agendar cita, Historial médico, Perfil y
    notificaciones). **Centros de salud** y **Agendar cita** abren su pantalla; las otras dos todavía
    muestran el aviso "Esta sección estará disponible pronto".
@@ -154,17 +154,18 @@ Las carpetas y archivos que **no** aparecen aquí son de configuración y normal
 
 Cada pantalla es una clase "Activity" (código) que va de la mano con un archivo de diseño (layout).
 
-| Archivo | Qué hace                                                                                                                                                                                                     |
-|---------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| `ActivityBienvenida.java` | Pantalla 1. Es la primera que se abre. El botón "Comenzar" (`irInicioSesion`) lleva al login.                                                                                                                |
-| `ActivityInicioSesion.java` | Pantalla 3. Valida correo y contraseña; si están bien abre el menú (`iniciarSesion`). También enlaza al registro (`irRegistro`).                                                                             |
-| `ActivityRegistroUsuario.java` | Pantalla 2. Valida los 6 campos del formulario (`registrarUsuario`) y permite volver al login (`irInicioSesion`).                                                                                            |
-| `ActivityMenuPrincipal.java` | Pantalla 4. Las cuatro tarjetas (`irCentrosSalud`, `irCitas`, `irHistorial`, `irPerfil`). `irCitas` abre Agendar cita; las demás muestran un aviso (`mostrarProximamente`).                                  |
+| Archivo | Qué hace                                                                                                                                                                                                    |
+|---------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| `ActivityBienvenida.java` | Pantalla 1. Es la primera que se abre. El botón "Comenzar" (`irInicioSesion`) lleva al login.                                                                                                               |
+| `ActivityInicioSesion.java` | Pantalla 3. Valida correo y contraseña y los busca en la base de datos; si el usuario existe guarda la sesión y abre el menú (`iniciarSesion`). También enlaza al registro (`irRegistro`). |
+| `ActivityRegistroUsuario.java` | Pantalla 2. Valida los 6 campos, revisa que el correo y el documento no estén registrados (`datosDisponibles`), guarda el usuario (`registrarUsuario`) y vuelve al login. |                                                                                       |
+| `ActivityMenuPrincipal.java` | Pantalla 4. Las cuatro tarjetas (`irCentrosSalud`, `irCitas`, `irHistorial`, `irPerfil`). `irCitas` abre Agendar cita; las demás muestran un aviso (`mostrarProximamente`).                                 |
 | `ActivityCentrosSalud.java` | Pantalla 5 (servicio GPS). Pide el permiso de ubicación, obtiene la ubicación actual (`obtenerUbicacionActual`) y abre Google Maps con un Intent (`verMiUbicacion`, `abrirCentroQuibdo`, `abrirCentroTado`). |
-| `ActivityAgendarCita.java` | Pantalla 6. Agendar cita; Permite guardar en la agenda(calendario) del dispositivo movil, y guardar la cita en `citas`.                                                                                             |
-| `AjusteTeclado.java` | Ayuda compartida: evita que el teclado del teléfono tape los campos de un formulario. La usan el login y el registro.                                                                                        |
-| `MainActivity.java` | Pantalla de ejemplo que trae Android Studio ("Hello World"). **No se usa**; se puede borrar más adelante.                                                                                                    |
-| `BaseDatos.java` | Base de datos SQLite (`chocosalud.db`): crea las tablas `usuarios`, `centros_salud` y `citas`, y agrega los dos centros iniciales.                                                                           |
+| `ActivityAgendarCita.java` | Pantalla 6. Agendar cita; Permite guardar en la agenda(calendario) del dispositivo movil, y guardar la cita en `citas`.                                                                                            |
+| `AjusteTeclado.java` | Ayuda compartida: evita que el teclado del teléfono tape los campos de un formulario. La usan el login y el registro.                                                                                       |
+| `MainActivity.java` | Pantalla de ejemplo que trae Android Studio ("Hello World"). **No se usa**; se puede borrar más adelante.                                                                                                   |
+| `BaseDatos.java` | Base de datos SQLite (`chocosalud.db`): crea las tablas `usuarios`, `centros_salud` y `citas`, y agrega los dos centros iniciales. Métodos de usuarios: `registrarUsuario`, `iniciarSesion`, `existeCorreo`, `existeDocumento` (la contraseña se guarda con hash SHA-256). |
+| `Sesion.java` | Ayuda compartida: recuerda el `_id` del usuario que inició sesión (`iniciar`, `obtenerUsuarioId`, `cerrar`) usando `SharedPreferences`. |
 
 ### 6.2 Diseños de pantalla (`app/src/main/res/layout/`)
 
@@ -379,10 +380,10 @@ ya mostraba la app (Quibdó y Tadó).
 
 ### 11.2 Plan de implementación:
 
-| # | Paso | Pantallas                                                | Operación SQL | Estado |
-|---|------|----------------------------------------------------------|---------------|--------|
-| 0 | Crear la base de datos y las tablas | `BaseDatos.java`                                         | CREATE TABLE | Hecho |
-| 1 | Registro e inicio de sesión reales | Registro, Inicio de sesión                               | INSERT, SELECT | Pendiente |
+| # | Paso | Pantallas                                                | Operación SQL | Estado    |
+|---|------|----------------------------------------------------------|---------------|-----------|
+| 0 | Crear la base de datos y las tablas | `BaseDatos.java`                                         | CREATE TABLE | Hecho     |
+| 1 | Registro e inicio de sesión reales | Registro, Inicio de sesión                               | INSERT, SELECT | Hecho     |
 | 2 | Ver y editar el perfil | Perfil y notificaciones (pantalla 8)                     | SELECT, UPDATE | Pendiente |
 | 3 | Agregar clínicas | Centros de salud (pantalla 5)                            | INSERT, SELECT | Pendiente |
 | 4 | Elegir clínica al agendar y ver el historial | Agendar cita (pantalla 6), Historial médico (pantalla 7) | INSERT, SELECT | Pendiente |
