@@ -4,15 +4,18 @@ import android.Manifest;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.graphics.Insets;
@@ -22,11 +25,15 @@ import androidx.core.view.WindowInsetsCompat;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.Priority;
+import com.google.android.material.button.MaterialButton;
 
 /*
  * CLASE: ActivityCentrosSalud -> PANTALLA 5 (Centros de salud)
  * SERVICIO GPS: obtiene la ubicación actual del teléfono y abre Google Maps
  * en esa ubicación o en un centro de salud.
+ * BASE DE DATOS (Fase 4): la lista de centros se lee de la tabla centros_salud (SELECT).
+ * El botón "Agregar clínica" abre ActivityAgregarCentro (INSERT) y al mantener presionado un
+ * centro se puede eliminar (DELETE) si no tiene citas.
  * Diseño visual: res/layout/activity_centros_salud.xml
  */
 public class ActivityCentrosSalud extends AppCompatActivity {
@@ -34,11 +41,10 @@ public class ActivityCentrosSalud extends AppCompatActivity {
     // CONSTANTE: código para identificar nuestra solicitud de permiso
     private static final int PERMISSION_REQUEST_CODE = 100;
 
-    // CONSTANTES: coordenadas (latitud, longitud) de los centros de salud
-    private static final double LATITUD_QUIBDO = 5.681290;
-    private static final double LONGITUD_QUIBDO = -76.649315;
-    private static final double LATITUD_TADO = 5.264165;
-    private static final double LONGITUD_TADO = -76.556871;
+    // VARIABLES: acceso a la base de datos y contenedor donde se ponen los botones de los centros.
+    // (En la Fase 3 las coordenadas de los centros estaban escritas aquí; ahora están en SQLite.)
+    private BaseDatos baseDatos;
+    private LinearLayout contenedorCentros;
 
     // VARIABLE: cliente de Google que nos da la ubicación del GPS
     private FusedLocationProviderClient fusedLocationClient;
@@ -67,6 +73,104 @@ public class ActivityCentrosSalud extends AppCompatActivity {
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
         textoUbicacion = findViewById(R.id.textoUbicacion);
         botonVerMiUbicacion = findViewById(R.id.botonVerMiUbicacion);
+        contenedorCentros = findViewById(R.id.contenedorCentros);
+        baseDatos = new BaseDatos(this);
+    }
+
+    /*
+     * MÉTODO: onResume
+     * - Android lo llama cada vez que la pantalla vuelve a verse. Así, al regresar de
+     *   "Agregar clínica", la lista ya muestra el centro nuevo.
+     */
+    @Override
+    protected void onResume() {
+        super.onResume();
+        cargarCentros();
+    }
+
+    // MÉTODO: onDestroy -> se cierra la base de datos al salir de la pantalla.
+    @Override
+    protected void onDestroy() {
+        baseDatos.close();
+        super.onDestroy();
+    }
+
+    /*
+     * MÉTODO: cargarCentros  (SELECT en centros_salud)
+     * - Borra los botones anteriores y crea un botón por cada centro guardado.
+     * - Tocar un botón: abre Google Maps en ese centro.
+     * - Mantenerlo presionado: pregunta si se quiere eliminar.
+     */
+    private void cargarCentros() {
+        contenedorCentros.removeAllViews();
+        try (Cursor centros = baseDatos.consultarCentros()) {
+            // moveToNext() avanza a la siguiente fila; devuelve false cuando ya no hay más.
+            while (centros.moveToNext()) {
+                long id = centros.getLong(centros.getColumnIndexOrThrow(BaseDatos.CENTRO_ID));
+                String nombre = centros.getString(centros.getColumnIndexOrThrow(BaseDatos.CENTRO_NOMBRE));
+                String municipio = centros.getString(centros.getColumnIndexOrThrow(BaseDatos.CENTRO_MUNICIPIO));
+                double latitud = centros.getDouble(centros.getColumnIndexOrThrow(BaseDatos.CENTRO_LATITUD));
+                double longitud = centros.getDouble(centros.getColumnIndexOrThrow(BaseDatos.CENTRO_LONGITUD));
+                contenedorCentros.addView(crearBotonCentro(id, nombre, municipio, latitud, longitud));
+            }
+        }
+    }
+
+    /*
+     * MÉTODO: crearBotonCentro
+     * - Crea, desde el código, un botón con borde (igual a los demás de la app) para un centro.
+     * - DEVUELVE: el botón listo para agregarlo a la pantalla.
+     */
+    private MaterialButton crearBotonCentro(long id, String nombre, String municipio,
+                                            double latitud, double longitud) {
+        // materialButtonOutlinedStyle: el mismo estilo "OutlinedButton" que se usa en los XML.
+        MaterialButton boton = new MaterialButton(this, null,
+                com.google.android.material.R.attr.materialButtonOutlinedStyle);
+        boton.setText(getString(R.string.centro_boton_texto, nombre, municipio));
+        boton.setMinHeight(getResources().getDimensionPixelSize(R.dimen.alto_boton_centro));
+
+        // Ancho completo y un pequeño espacio arriba de cada botón.
+        LinearLayout.LayoutParams medidas = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+        medidas.topMargin = getResources().getDimensionPixelSize(R.dimen.espacio_boton_centro);
+        boton.setLayoutParams(medidas);
+
+        boton.setOnClickListener(v -> abrirMapa(latitud, longitud, nombre));
+        boton.setOnLongClickListener(v -> {
+            confirmarEliminarCentro(id, nombre);
+            return true; // true = el toque largo ya se atendió
+        });
+        return boton;
+    }
+
+    /*
+     * MÉTODO: confirmarEliminarCentro
+     * - Pregunta antes de borrar. Si el centro tiene citas, no se deja borrar.
+     */
+    private void confirmarEliminarCentro(long id, String nombre) {
+        if (baseDatos.centroTieneCitas(id)) {
+            Toast.makeText(this, R.string.error_centro_con_citas, Toast.LENGTH_LONG).show();
+            return;
+        }
+        new AlertDialog.Builder(this)
+                .setTitle(R.string.confirmar_eliminar_centro_titulo)
+                .setMessage(getString(R.string.confirmar_eliminar_centro_mensaje, nombre))
+                .setPositiveButton(R.string.boton_si_eliminar, (dialogo, boton) -> {
+                    if (baseDatos.eliminarCentro(id) > 0) {
+                        Toast.makeText(this, R.string.centro_eliminado, Toast.LENGTH_SHORT).show();
+                        cargarCentros();
+                    }
+                })
+                .setNegativeButton(R.string.boton_no, null)
+                .show();
+    }
+
+    /*
+     * MÉTODO: irAgregarCentro
+     * - Se ejecuta al tocar "Agregar clínica". Abre el formulario.
+     */
+    public void irAgregarCentro(View v) {
+        startActivity(new Intent(this, ActivityAgregarCentro.class));
     }
 
     // MÉTODO: obtenerUbicacionActual -> botón "Obtener mi ubicación"
@@ -117,16 +221,6 @@ public class ActivityCentrosSalud extends AppCompatActivity {
     // MÉTODO: verMiUbicacion -> botón "Ver mi ubicación en el mapa"
     public void verMiUbicacion(View v) {
         abrirMapa(miLatitud, miLongitud, getString(R.string.mi_ubicacion));
-    }
-
-    // MÉTODO: abrirCentroQuibdo -> botón de la clínica de Quibdó
-    public void abrirCentroQuibdo(View v) {
-        abrirMapa(LATITUD_QUIBDO, LONGITUD_QUIBDO, getString(R.string.centro_quibdo));
-    }
-
-    // MÉTODO: abrirCentroTado -> botón del hospital de Tadó
-    public void abrirCentroTado(View v) {
-        abrirMapa(LATITUD_TADO, LONGITUD_TADO, getString(R.string.centro_tado));
     }
 
     // MÉTODO: abrirMapa -> abre Google Maps en unas coordenadas con un Intent (no necesita API key)

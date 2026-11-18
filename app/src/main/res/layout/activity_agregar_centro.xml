@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    DISEÑO de la pantalla "Agregar clínica" (lógica en ActivityAgregarCentro.java).
+
+    Formulario para guardar un centro de salud nuevo en la tabla centros_salud:
+    nombre, municipio, dirección, teléfono, latitud y longitud. El botón
+    "Usar mi ubicación actual" llena la latitud y la longitud con el GPS.
+-->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".ActivityAgregarCentro">
+
+    <ScrollView
+        android:id="@+id/scrollFormulario"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:id="@+id/contenidoFormulario"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="24dp">
+
+            <!-- Logo -->
+            <ImageView
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_gravity="center_horizontal"
+                android:contentDescription="@string/logo_descripcion"
+                android:src="@drawable/logo_chocosalud" />
+
+            <!-- Título y subtítulo -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:gravity="center"
+                android:text="@string/agregar_centro_titulo"
+                android:textColor="?attr/colorPrimary"
+                android:textSize="28sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="16dp"
+                android:gravity="center"
+                android:text="@string/agregar_centro_subtitulo"
+                android:textColor="?attr/colorOnBackground"
+                android:textSize="16sp" />
+
+            <!-- Nombre (obligatorio) -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/layoutNombreCentro"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/hint_nombre_centro">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/campoNombreCentro"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textCapWords" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Municipio (obligatorio) -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/layoutMunicipio"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:hint="@string/hint_municipio">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/campoMunicipio"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textCapWords" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Dirección (opcional) -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/layoutDireccion"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:hint="@string/hint_direccion">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/campoDireccion"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPostalAddress" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Teléfono (opcional) -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/layoutTelefonoCentro"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:hint="@string/hint_telefono_centro">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/campoTelefonoCentro"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="phone" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Ubicación: latitud y longitud (obligatorias) -->
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="20dp"
+                android:text="@string/agregar_centro_ubicacion"
+                android:textColor="?attr/colorPrimary"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="8dp"
+                android:text="@string/agregar_centro_ubicacion_ayuda"
+                android:textColor="?attr/colorOnBackground"
+                android:textSize="14sp" />
+
+            <!-- Llena la latitud y la longitud con el GPS (útil si se está en la clínica) -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/botonUsarUbicacion"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:onClick="usarMiUbicacion"
+                android:text="@string/boton_usar_mi_ubicacion"
+                android:textSize="16sp" />
+
+            <!-- numberDecimal|numberSigned: teclado con números, punto decimal y signo menos -->
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/layoutLatitud"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:hint="@string/hint_latitud">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/campoLatitud"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="numberDecimal|numberSigned" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/layoutLongitud"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:hint="@string/hint_longitud">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/campoLongitud"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="numberDecimal|numberSigned" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <!-- Guarda el centro en la tabla centros_salud -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/botonGuardarCentro"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginTop="24dp"
+                android:onClick="guardarCentro"
+                android:text="@string/boton_guardar_centro"
+                android:textSize="16sp" />
+
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

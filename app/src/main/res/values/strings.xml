@@ -50,7 +50,6 @@
     <string name="menu_citas">Agendar cita</string>
     <string name="menu_historial">Historial médico</string>
     <string name="menu_perfil">Perfil y notificaciones</string>
-    <string name="proximamente">Esta sección estará disponible pronto</string>
 
     <!-- Centros de salud (GPS) -->
     <string name="centros_titulo">Centros de salud</string>
@@ -63,6 +62,13 @@
     <string name="ubicacion_no_disponible">No se pudo obtener la ubicación. Activa la ubicación del teléfono e intenta de nuevo.</string>
     <string name="permiso_ubicacion_negado">Sin el permiso de ubicación no podemos mostrar dónde estás</string>
     <string name="centros_lista_titulo">Centros de salud disponibles</string>
+    <string name="centros_lista_ayuda">Toca un centro para verlo en el mapa. Mantenlo presionado para eliminarlo.</string>
+    <string name="centro_boton_texto">%1$s\n%2$s</string>
+    <string name="boton_agregar_centro">Agregar clínica</string>
+    <string name="error_centro_con_citas">No se puede eliminar: este centro tiene citas agendadas</string>
+    <string name="confirmar_eliminar_centro_titulo">Eliminar centro de salud</string>
+    <string name="confirmar_eliminar_centro_mensaje">¿Seguro que deseas eliminar «%1$s»?</string>
+    <string name="centro_eliminado">Centro de salud eliminado</string>
     <string name="centro_quibdo">Clínica de los Especialistas del Chocó Reina Virgen María (Quibdó)</string>
     <string name="centro_tado">Hospital San José de Tadó</string>
     <string name="mi_ubicacion">Mi ubicación</string>
@@ -103,7 +109,7 @@
     <string name="boton_mis_citas">Ver mis citas</string>
     <string name="boton_guardar_cambios">Guardar cambios</string>
     <string name="editar_cita_titulo">Editar cita</string>
-    <string name="cita_guardada">Cita guardada</string>
+    <string name="cita_guardada">Cita guardada en tu historial médico</string>
     <string name="cita_actualizada">Cita actualizada</string>
     <string name="cita_cancelada">Cita cancelada</string>
     <string name="error_guardar_cita">No se pudo guardar la cita. Intenta de nuevo</string>
@@ -120,4 +126,68 @@
     <string name="confirmar_cancelar_mensaje">¿Seguro que deseas cancelar esta cita? Esta acción no se puede deshacer.</string>
     <string name="boton_si_cancelar">Sí, cancelar</string>
     <string name="boton_no">No</string>
+    <string name="boton_si_eliminar">Sí, eliminar</string>
+    <string name="boton_cerrar">Cerrar</string>
+
+    <!-- Agregar clínica (Fase 4, SQLite) -->
+    <string name="agregar_centro_titulo">Agregar clínica</string>
+    <string name="agregar_centro_subtitulo">Registra un centro de salud para verlo en el mapa y agendar citas en él</string>
+    <string name="hint_nombre_centro">Nombre del centro de salud</string>
+    <string name="hint_municipio">Municipio</string>
+    <string name="hint_direccion">Dirección (opcional)</string>
+    <string name="hint_telefono_centro">Teléfono del centro (opcional)</string>
+    <string name="agregar_centro_ubicacion">Ubicación</string>
+    <string name="agregar_centro_ubicacion_ayuda">Si estás en la clínica, usa tu ubicación actual. También puedes copiar las coordenadas desde Google Maps.</string>
+    <string name="boton_usar_mi_ubicacion">Usar mi ubicación actual</string>
+    <string name="hint_latitud">Latitud (ej. 5.681290)</string>
+    <string name="hint_longitud">Longitud (ej. -76.649315)</string>
+    <string name="boton_guardar_centro">Guardar clínica</string>
+    <string name="error_nombre_centro_requerido">Ingresa el nombre del centro de salud</string>
+    <string name="error_municipio_requerido">Ingresa el municipio</string>
+    <string name="error_coordenada_invalida">Ingresa un número entre -%1$d y %1$d</string>
+    <string name="error_guardar_centro">No se pudo guardar el centro. Intenta de nuevo</string>
+    <string name="centro_guardado">Centro de salud guardado</string>
+
+    <!-- Historial médico (Fase 4, SQLite) -->
+    <string name="historial_titulo">Historial médico</string>
+    <string name="historial_subtitulo">Tus citas guardadas. Toca una para ver el detalle y la fórmula</string>
+    <string name="historial_vacio">Tu historial está vacío. Cuando agendes una cita aparecerá aquí</string>
+    <string name="historial_resumen">Total: %1$d · Próximas: %2$d · Realizadas: %3$d</string>
+    <string name="estado_proxima">Próxima</string>
+    <string name="estado_realizada">Realizada</string>
+    <string name="historial_con_formula">" · Con fórmula"</string>
+    <string name="historial_detalle_titulo">Detalle de la cita</string>
+    <string name="historial_detalle">Especialidad: %1$s\nCentro: %2$s (%3$s)\nFecha: %4$s\nEstado: %5$s\nTeléfono de contacto: %6$s\nRegistrada el: %7$s\nFórmula médica: %8$s</string>
+    <string name="historial_formula_si">adjunta</string>
+    <string name="historial_formula_no">no adjunta</string>
+    <string name="boton_nueva_cita">Agendar nueva cita</string>
+
+    <!-- Perfil y notificaciones (Fase 4, SQLite) -->
+    <string name="perfil_titulo">Mi perfil</string>
+    <string name="perfil_subtitulo">Consulta y actualiza tus datos</string>
+    <string name="perfil_seccion_datos">Mis datos</string>
+    <string name="perfil_seccion_contrasena">Cambiar contraseña</string>
+    <string name="perfil_seccion_notificaciones">Notificaciones</string>
+    <string name="perfil_notificaciones_texto">Recibir avisos de mis citas</string>
+    <string name="hint_contrasena_actual">Contraseña actual</string>
+    <string name="hint_contrasena_nueva">Nueva contraseña</string>
+    <string name="boton_cambiar_contrasena">Cambiar contraseña</string>
+    <string name="boton_cerrar_sesion">Cerrar sesión</string>
+    <string name="boton_eliminar_cuenta">Eliminar mi cuenta</string>
+    <string name="perfil_actualizado">Datos actualizados</string>
+    <string name="error_actualizar_perfil">No se pudieron guardar los cambios. Intenta de nuevo</string>
+    <string name="contrasena_actualizada">Contraseña actualizada</string>
+    <string name="error_contrasena_actual">La contraseña actual no es correcta</string>
+    <string name="notificaciones_activadas">Notificaciones activadas</string>
+    <string name="notificaciones_desactivadas">Notificaciones desactivadas</string>
+    <string name="permiso_notificaciones_negado">Sin el permiso de notificaciones no podemos avisarte de tus citas</string>
+    <string name="confirmar_eliminar_cuenta_titulo">Eliminar mi cuenta</string>
+    <string name="confirmar_eliminar_cuenta_mensaje">Se borrarán tus datos y todo tu historial de citas. Esta acción no se puede deshacer.</string>
+    <string name="cuenta_eliminada">Tu cuenta fue eliminada</string>
+
+    <!-- Notificaciones -->
+    <string name="canal_citas_nombre">Recordatorios de citas</string>
+    <string name="canal_citas_descripcion">Avisos cuando agendas una cita médica</string>
+    <string name="notificacion_cita_titulo">Cita agendada</string>
+    <string name="notificacion_cita_texto">%1$s el %2$s. Toca para ver tu historial médico</string>
 </resources>

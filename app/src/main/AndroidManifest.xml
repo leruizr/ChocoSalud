@@ -10,6 +10,8 @@
     <!-- Permisos de ubicación (GPS): FINE = ubicación exacta, COARSE = ubicación aproximada -->
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <!-- Permiso de notificaciones (se pide al usuario desde Android 13): avisos de citas -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
         android:allowBackup="true"
@@ -69,6 +71,20 @@
         <activity
             android:name=".ActivityCentrosSalud"
             android:exported="false" />
+        <!-- Agregar clínica: formulario que guarda un centro en centros_salud (Fase 4) -->
+        <activity
+            android:name=".ActivityAgregarCentro"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
+        <!-- Pantalla 7: Historial médico (Fase 4) -->
+        <activity
+            android:name=".ActivityHistorial"
+            android:exported="false" />
+        <!-- Pantalla 8: Perfil y notificaciones (Fase 4) -->
+        <activity
+            android:name=".ActivityPerfil"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize" />
     </application>
 
 </manifest>
