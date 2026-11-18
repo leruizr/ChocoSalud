@@ -79,7 +79,8 @@
                 android:onClick="verMiUbicacion"
                 android:text="@string/boton_ver_mi_ubicacion" />
 
-            <!-- Lista de centros de salud: cada botón abre Google Maps en ese centro -->
+            <!-- Lista de centros de salud: se lee de la tabla centros_salud (Fase 4, SQLite).
+                 El código (cargarCentros) crea un botón por cada centro dentro del contenedor. -->
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -89,25 +90,30 @@
                 android:textSize="18sp"
                 android:textStyle="bold" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/botonCentroQuibdo"
-                style="@style/Widget.Material3.Button.OutlinedButton"
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:minHeight="56dp"
-                android:onClick="abrirCentroQuibdo"
-                android:text="@string/centro_quibdo" />
+                android:layout_marginTop="4dp"
+                android:text="@string/centros_lista_ayuda"
+                android:textColor="?attr/colorOnBackground"
+                android:textSize="14sp" />
 
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/botonCentroTado"
-                style="@style/Widget.Material3.Button.OutlinedButton"
+            <!-- Contenedor vacío: aquí se agregan los botones de los centros desde el código -->
+            <LinearLayout
+                android:id="@+id/contenedorCentros"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:minHeight="56dp"
-                android:onClick="abrirCentroTado"
-                android:text="@string/centro_tado" />
+                android:orientation="vertical" />
+
+            <!-- Abre el formulario "Agregar clínica" (INSERT en centros_salud) -->
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/botonAgregarCentro"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginTop="16dp"
+                android:onClick="irAgregarCentro"
+                android:text="@string/boton_agregar_centro"
+                android:textSize="16sp" />
 
         </LinearLayout>
     </ScrollView>

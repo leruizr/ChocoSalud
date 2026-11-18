@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    DISEÑO del cuadro de diálogo "Detalle de la cita" del Historial médico
+    (lo llena ActivityHistorial.mostrarDetalle). Muestra los datos de la cita
+    y, si la tiene, la foto de la fórmula médica guardada en SQLite.
+-->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingStart="24dp"
+        android:paddingTop="8dp"
+        android:paddingEnd="24dp">
+
+        <!-- Datos de la cita (especialidad, centro, fecha, estado, teléfono) -->
+        <TextView
+            android:id="@+id/textoDetalle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:lineSpacingExtra="4dp"
+            android:textColor="?attr/colorOnBackground"
+            android:textSize="16sp" />
+
+        <!-- Foto de la fórmula médica (se oculta si la cita no tiene foto) -->
+        <ImageView
+            android:id="@+id/imagenDetalleFormula"
+            android:layout_width="match_parent"
+            android:layout_height="220dp"
+            android:layout_marginTop="12dp"
+            android:contentDescription="@string/formula_descripcion"
+            android:scaleType="fitCenter"
+            android:visibility="gone" />
+
+    </LinearLayout>
+</ScrollView>

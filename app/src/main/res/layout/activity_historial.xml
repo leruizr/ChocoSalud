@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- DISEÑO de la pantalla 7: Historial médico (lógica en ActivityHistorial.java) -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="24dp"
+    tools:context=".ActivityHistorial">
+
+    <!-- Logo -->
+    <ImageView
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_gravity="center_horizontal"
+        android:contentDescription="@string/logo_descripcion"
+        android:src="@drawable/logo_chocosalud" />
+
+    <!-- Título y subtítulo -->
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:gravity="center"
+        android:text="@string/historial_titulo"
+        android:textColor="?attr/colorPrimary"
+        android:textSize="28sp"
+        android:textStyle="bold" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        android:gravity="center"
+        android:text="@string/historial_subtitulo"
+        android:textColor="?attr/colorOnBackground"
+        android:textSize="16sp" />
+
+    <!-- Resumen: total de citas, próximas y realizadas (COUNT y SUM en SQL) -->
+    <TextView
+        android:id="@+id/textoResumen"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="8dp"
+        android:gravity="center"
+        android:textColor="?attr/colorSecondary"
+        android:textSize="16sp"
+        android:textStyle="bold" />
+
+    <!-- Lista del historial: se llena desde la tabla citas -->
+    <ListView
+        android:id="@+id/listaHistorial"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <!-- Texto que se muestra cuando el usuario aún no tiene citas -->
+    <TextView
+        android:id="@+id/textoSinHistorial"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:text="@string/historial_vacio"
+        android:textColor="?attr/colorOnBackground"
+        android:textSize="16sp"
+        android:visibility="gone" />
+
+    <!-- Atajo para agendar una cita nueva -->
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/botonNuevaCita"
+        android:layout_width="match_parent"
+        android:layout_height="56dp"
+        android:layout_marginTop="8dp"
+        android:onClick="irAgendarCita"
+        android:text="@string/boton_nueva_cita"
+        android:textSize="16sp" />
+
+</LinearLayout>

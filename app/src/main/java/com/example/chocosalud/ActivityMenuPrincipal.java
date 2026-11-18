@@ -3,7 +3,6 @@ package com.example.chocosalud;
 // IMPORTS: traen las clases de Android que usa esta pantalla.
 import android.os.Bundle;
 import android.view.View;
-import android.widget.Toast;
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
@@ -52,19 +51,15 @@ public class ActivityMenuPrincipal extends AppCompatActivity {
         startActivity(intent);
     }
 
-    // MÉTODO: irHistorial -> tarjeta "Historial médico". Pantalla pendiente: muestra un aviso.
+    // MÉTODO: irHistorial -> tarjeta "Historial médico". Abre la pantalla ActivityHistorial.
     public void irHistorial(View v) {
-        mostrarProximamente();
+        Intent intent = new Intent(this, ActivityHistorial.class);
+        startActivity(intent);
     }
 
-    // MÉTODO: irPerfil -> tarjeta "Perfil y notificaciones". Pantalla pendiente: muestra un aviso.
+    // MÉTODO: irPerfil -> tarjeta "Perfil y notificaciones". Abre la pantalla ActivityPerfil.
     public void irPerfil(View v) {
-        mostrarProximamente();
-    }
-
-    // MÉTODO: mostrarProximamente -> muestra el mensaje "Esta sección estará disponible pronto".
-    // Se creó para no repetir el mismo código en las tres tarjetas pendientes.
-    private void mostrarProximamente() {
-        Toast.makeText(this, R.string.proximamente, Toast.LENGTH_SHORT).show();
+        Intent intent = new Intent(this, ActivityPerfil.class);
+        startActivity(intent);
     }
 }

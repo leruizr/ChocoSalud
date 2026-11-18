@@ -19,15 +19,15 @@ clínico básico y recibir notificaciones sobre la atención en salud.
 | 1 | Bienvenida | Hecha |
 | 2 | Registro de usuario | Hecha (guarda el usuario en la base de datos) |
 | 3 | Inicio de sesión | Hecha (solo entran usuarios registrados en la base de datos) |
-| 4 | Menú principal | Hecha ("Centros de salud" y "Agendar cita" abren su pantalla; las demás tarjetas muestran "Esta sección estará disponible pronto") |
-| 5 | Directorio de centros de salud (con GPS) | Hecha (obtiene la ubicación actual y abre Google Maps) |
-| 6 | Agendamiento de citas | Hecha (guarda la cita en la base de datos y en el calendario del teléfono; con "Ver mis citas" se consultan, editan y cancelan) |
-| 7 | Historial médico | Pendiente |
-| 8 | Perfil y notificaciones | Pendiente |
+| 4 | Menú principal | Hecha (las cuatro tarjetas abren su pantalla) |
+| 5 | Directorio de centros de salud (con GPS) | Hecha (lista de centros leída de la base de datos, botón "Agregar clínica", ubicación actual y Google Maps) |
+| 6 | Agendamiento de citas | Hecha (guarda la cita y la foto de la fórmula en la base de datos y en el calendario del teléfono; con "Ver mis citas" se consultan, editan y cancelan) |
+| 7 | Historial médico | Hecha (todas las citas del usuario con su estado, resumen y foto de la fórmula) |
+| 8 | Perfil y notificaciones | Hecha (ver y editar datos, cambiar contraseña, activar notificaciones, cerrar sesión y eliminar cuenta) |
 
-**Base de datos SQLite.** Ya existe la clase `BaseDatos` con las
-tablas de usuarios, centros de salud y citas. El registro y el inicio de sesión ya la usan, y las
-citas tienen el CRUD completo: crear, consultar, editar y cancelar (ver la sección 11).
+**Base de datos SQLite (Fase 4, completa).** La clase `BaseDatos` maneja las tablas de usuarios,
+centros de salud y citas. La usan todas las pantallas: registro, login, perfil, centros de salud,
+agendar cita, mis citas e historial médico (ver la sección 11).
 Los servicios previstos son: **GPS** (centros cercanos), **cámara** (adjuntar fotos de fórmulas
 o documentos) y **notificaciones** (recordatorios de citas).
 
@@ -134,14 +134,24 @@ Si solo quieres que otra persona pruebe la app:
    **Registrarme** se guarda el usuario y la app vuelve al login para que inicies sesión. Para regresar
    sin registrarte pulsa **¿Ya tienes cuenta? Inicia sesión**.
 4. **Menú principal:** cuatro tarjetas (Centros de salud, Agendar cita, Historial médico, Perfil y
-   notificaciones). **Centros de salud** y **Agendar cita** abren su pantalla; las otras dos todavía
-   muestran el aviso "Esta sección estará disponible pronto".
+   notificaciones). Cada una abre su pantalla.
 5. **Centros de salud (GPS):** pulsa **Obtener mi ubicación** y acepta el permiso de ubicación. La app
    muestra tu latitud y longitud; con **Ver mi ubicación en el mapa** se abre Google Maps en ese punto.
-   Los botones de la clínica de Quibdó y del hospital de Tadó abren Google Maps en cada centro (desde
-   ahí puedes pulsar "Cómo llegar"). La ubicación del teléfono debe estar activada. *No usa API key.*
-6. **Agendar cita:** permite elegir la especialidad, escribir un teléfono de contacto, tomar fotografia de la formula (o evidencia similar) y escoger la fecha
-   en un calendario. 
+   Debajo está la **lista de centros guardados en la base de datos**: al tocar uno se abre Google Maps
+   en ese centro (desde ahí puedes pulsar "Cómo llegar"); al mantenerlo presionado se puede eliminar
+   (solo si no tiene citas). Con **Agregar clínica** se registra un centro nuevo (nombre, municipio,
+   dirección, teléfono, latitud y longitud; el botón **Usar mi ubicación actual** llena las coordenadas
+   con el GPS). *No usa API key.*
+6. **Agendar cita:** permite elegir la especialidad, el **centro de salud** (desplegable leído de la base
+   de datos), escribir un teléfono de contacto, tomar fotografía de la fórmula (o evidencia similar) y
+   escoger la fecha. Al pulsar **Enviar** la cita (con la foto) se guarda en la base de datos, queda en
+   el **historial médico**, se abre el calendario del teléfono y, si están activadas, llega una
+   notificación. Con **Ver mis citas** se pueden editar o cancelar.
+7. **Historial médico:** muestra todas las citas del usuario (de la más reciente a la más antigua) con
+   su centro y su estado: **Próxima** (de hoy en adelante) o **Realizada** (fecha pasada). Arriba se ve
+   un resumen con el total. Al tocar una cita se abre su detalle con la foto de la fórmula.
+8. **Perfil y notificaciones:** muestra los datos del usuario y permite editarlos, cambiar la contraseña
+   (pide la actual), activar o desactivar los avisos de citas, **cerrar sesión** y **eliminar la cuenta**.
 
 El botón **Atrás** del menú principal cierra la app (no vuelve al login).
 
@@ -160,8 +170,12 @@ Cada pantalla es una clase "Activity" (código) que va de la mano con un archivo
 | `ActivityBienvenida.java` | Pantalla 1. Es la primera que se abre. El botón "Comenzar" (`irInicioSesion`) lleva al login.                                                                                                               |
 | `ActivityInicioSesion.java` | Pantalla 3. Valida correo y contraseña y los busca en la base de datos; si el usuario existe guarda la sesión y abre el menú (`iniciarSesion`). También enlaza al registro (`irRegistro`). |
 | `ActivityRegistroUsuario.java` | Pantalla 2. Valida los 6 campos, revisa que el correo y el documento no estén registrados (`datosDisponibles`), guarda el usuario (`registrarUsuario`) y vuelve al login. |                                                                                       |
-| `ActivityMenuPrincipal.java` | Pantalla 4. Las cuatro tarjetas (`irCentrosSalud`, `irCitas`, `irHistorial`, `irPerfil`). `irCitas` abre Agendar cita; las demás muestran un aviso (`mostrarProximamente`).                                 |
-| `ActivityCentrosSalud.java` | Pantalla 5 (servicio GPS). Pide el permiso de ubicación, obtiene la ubicación actual (`obtenerUbicacionActual`) y abre Google Maps con un Intent (`verMiUbicacion`, `abrirCentroQuibdo`, `abrirCentroTado`). |
+| `ActivityMenuPrincipal.java` | Pantalla 4. Las cuatro tarjetas (`irCentrosSalud`, `irCitas`, `irHistorial`, `irPerfil`) abren su pantalla. |
+| `ActivityCentrosSalud.java` | Pantalla 5 (servicio GPS). Pide el permiso de ubicación, obtiene la ubicación actual (`obtenerUbicacionActual`) y abre Google Maps con un Intent (`verMiUbicacion`, `abrirMapa`). La lista de centros se lee de la base de datos (`cargarCentros`, `crearBotonCentro`); se puede eliminar un centro sin citas (`confirmarEliminarCentro`) y abrir "Agregar clínica" (`irAgregarCentro`). |
+| `ActivityAgregarCentro.java` | Agregar clínica: valida el formulario (`leerCoordenada`), llena las coordenadas con el GPS (`usarMiUbicacion`, `obtenerUbicacion`) y guarda el centro en `centros_salud` (`guardarCentro`). |
+| `ActivityHistorial.java` | Pantalla 7. Historial médico: lista las citas con su estado (`cargarHistorial`), muestra el resumen y el detalle con la foto de la fórmula (`mostrarDetalle`, `estadoDe`). |
+| `ActivityPerfil.java` | Pantalla 8. Perfil y notificaciones: carga y guarda los datos (`cargarPerfil`, `guardarPerfil`), cambia la contraseña (`cambiarContrasena`), guarda la preferencia de notificaciones (`cambiarNotificaciones`), cierra sesión (`cerrarSesion`) y elimina la cuenta (`confirmarEliminarCuenta`, `eliminarCuenta`). |
+| `Notificaciones.java` | Ayuda compartida (servicio de notificaciones): crea el canal y muestra el aviso "Cita agendada" (`avisarCitaAgendada`), que al tocarlo abre el historial. |
 | `ActivityAgendarCita.java` | Pantalla 6. Agendar cita: guarda la cita en la tabla `citas` (`agendarCita`) y en el calendario del teléfono (`abrirCalendario`). El selector de centro se llena desde la base de datos (`cargarCentros`). Si se abre desde "Mis citas", entra en **modo edición** (`prepararModoEdicion`, `cargarCita`) y el botón pasa a "Guardar cambios". También abre "Mis citas" (`verMisCitas`). |
 | `ActivityMisCitas.java` | Mis citas: lista las citas del usuario (`cargarCitas`). Al tocar una se puede **editar** (`editarCita`) o **cancelar** con confirmación (`confirmarCancelacion`, `cancelarCita`). |
 | `AjusteTeclado.java` | Ayuda compartida: evita que el teclado del teléfono tape los campos de un formulario. La usan el login y el registro.                                                                                       |
@@ -180,6 +194,10 @@ Cada pantalla es una clase "Activity" (código) que va de la mano con un archivo
 | `activity_centros_salud.xml` | Diseño de la pantalla 5 (botón de ubicación, texto con la ubicación y botones de los centros de salud). |
 | `activity_agendar_cita.xml` | Diseño de la pantalla 6 (especialidad, centro de salud, teléfono, foto, calendario, botón "Enviar" y botón "Ver mis citas"). |
 | `activity_mis_citas.xml` | Diseño de "Mis citas" (lista de citas y texto para cuando no hay citas). |
+| `activity_agregar_centro.xml` | Diseño de "Agregar clínica" (formulario del centro de salud). |
+| `activity_historial.xml` | Diseño del historial médico (resumen, lista y botón "Agendar nueva cita"). |
+| `dialogo_detalle_cita.xml` | Diseño del cuadro "Detalle de la cita" del historial (datos y foto de la fórmula). |
+| `activity_perfil.xml` | Diseño de Perfil y notificaciones (datos, contraseña, interruptor y botones de sesión). |
 | `activity_main.xml` | Diseño de `MainActivity` (no se usa). |
 
 ### 6.3 Recursos (`app/src/main/res/`)
@@ -333,7 +351,7 @@ Recomendaciones:
 - **Versión mínima de Android:** 7.0 (API 24) · **Versión objetivo:** API 37
 - **Paquete:** `com.example.chocosalud`
 - **Herramientas:** Android Gradle Plugin 9.3.3 · Gradle 9.5.0
-- **Base de datos:** SQLite con `SQLiteOpenHelper` (archivo `chocosalud.db`, versión 1)
+- **Base de datos:** SQLite con `SQLiteOpenHelper` (archivo `chocosalud.db`, versión 2)
 
 ---
 
@@ -355,6 +373,7 @@ desde una sola clase: **`BaseDatos.java`**.
 | `correo` | TEXT | Obligatorio, **único**; se usa para iniciar sesión |
 | `telefono` | TEXT | Obligatorio |
 | `contrasena` | TEXT | Obligatorio. Se guarda el **hash SHA-256**, nunca la contraseña tal cual |
+| `notificaciones` | INTEGER | *(versión 2)* 1 = recibir avisos de citas, 0 = no. Por defecto 1 |
 
 **`centros_salud`**: clínicas y hospitales. Al crear la base de datos se agregan los dos centros que
 ya mostraba la app (Quibdó y Tadó).
@@ -380,6 +399,11 @@ ya mostraba la app (Quibdó y Tadó).
 | `telefono` | TEXT | Teléfono de contacto de la cita |
 | `fecha` | TEXT | Formato `yyyy-MM-dd` (ej. `2026-11-20`), para poder ordenar por fecha |
 | `creada_en` | TEXT | Fecha y hora de creación; la pone SQLite sola |
+| `foto` | BLOB | *(versión 2)* Foto de la fórmula médica en bytes (JPEG). Opcional |
+
+**Versión 2 de la base de datos.** Agregó las columnas `notificaciones` y `foto`. En los teléfonos
+que ya tenían la versión 1, `onUpgrade` las agrega con `ALTER TABLE ... ADD COLUMN`, **sin borrar**
+los usuarios ni las citas guardados.
 
 ### 11.2 Plan de implementación:
 
@@ -387,9 +411,10 @@ ya mostraba la app (Quibdó y Tadó).
 |---|------|----------------------------------------------------------|---------------|-----------|
 | 0 | Crear la base de datos y las tablas | `BaseDatos.java`                                         | CREATE TABLE | Hecho     |
 | 1 | Registro e inicio de sesión reales | Registro, Inicio de sesión                               | INSERT, SELECT | Hecho     |
-| 2 | Ver y editar el perfil | Perfil y notificaciones (pantalla 8)                     | SELECT, UPDATE | Pendiente |
-| 3 | Agregar clínicas | Centros de salud (pantalla 5)                            | INSERT, SELECT | Pendiente |
+| 2 | Ver y editar el perfil | Perfil y notificaciones (pantalla 8)                     | SELECT, UPDATE, DELETE | Hecho |
+| 3 | Agregar clínicas | Centros de salud (pantalla 5), Agregar clínica           | INSERT, SELECT, DELETE | Hecho |
 | 4 | CRUD de citas: elegir clínica al agendar, ver, editar y cancelar | Agendar cita (pantalla 6), Mis citas | INSERT, SELECT, UPDATE, DELETE | Hecho |
+| 5 | Historial médico: cada cita agendada (con su foto) queda en el historial | Historial médico (pantalla 7) | SELECT con JOIN, CASE, COUNT, SUM | Hecho |
 
 1. **Registro e inicio de sesión.** El formulario de registro (desde *"¿No tienes cuenta? Regístrate"*)
    guarda el usuario en la tabla `usuarios`. Si el correo o el documento ya existen, avisa. Para entrar a
@@ -397,16 +422,23 @@ ya mostraba la app (Quibdó y Tadó).
    de datos. Al iniciar sesión se recuerda el `_id` del usuario para que las demás pantallas sepan quién
    está conectado.
 2. **Perfil y notificaciones.** Muestra los datos del usuario conectado y permite **editar** nombre,
-   correo, teléfono, contraseña y demás datos.
-3. **Centros de salud.** Se agrega un botón **"Agregar clínica"** que guarda en `centros_salud` el nombre,
-   municipio, latitud, longitud y demás datos. La lista de centros se lee desde la tabla (ya no queda
-   escrita en el código).
+   documento, correo y teléfono (revisando que el correo y el documento no sean de otro usuario),
+   **cambiar la contraseña** (solo si la actual es correcta), **activar o desactivar las notificaciones**
+   (columna `notificaciones`), **cerrar sesión** y **eliminar la cuenta** (con `ON DELETE CASCADE` se
+   borran también sus citas).
+3. **Centros de salud.** El botón **"Agregar clínica"** guarda en `centros_salud` el nombre,
+   municipio, dirección, teléfono, latitud y longitud (las coordenadas se pueden llenar con el GPS).
+   La lista de centros se lee desde la tabla (ya no queda escrita en el código) y el centro nuevo
+   aparece también en el desplegable de Agendar cita. Un centro se puede eliminar si no tiene citas.
 4. **CRUD de citas.** Agendar cita tiene un **desplegable para elegir la clínica** (leído de
    `centros_salud`). Al pulsar **Enviar** **guarda la cita** en `citas` y abre el calendario del
    teléfono. Con **"Ver mis citas"** se abre la pantalla **Mis citas**, que lista las citas del usuario
    conectado; al tocar una se puede **editar** (abre Agendar cita con los datos cargados y el botón
    "Guardar cambios") o **cancelar** (pide confirmación y la borra). Cada usuario solo ve y modifica sus
-   propias citas. *Pendiente decidir:* la tarjeta **Historial médico** del menú puede abrir "Mis citas".
+   propias citas. La foto de la fórmula se guarda en la columna `foto` (BLOB).
+5. **Historial médico.** Toda cita agendada queda en el historial del usuario. La pantalla la muestra con
+   su centro de salud y su estado (**Próxima** o **Realizada**, calculado en SQL con `CASE` comparando la
+   fecha con `date('now','localtime')`), un resumen con `COUNT` y `SUM`, y el detalle con la foto.
 
 ### 11.3 Reglas para trabajar con la base de datos
 

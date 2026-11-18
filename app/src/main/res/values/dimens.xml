@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- MEDIDAS que se usan desde el código Java (ActivityCentrosSalud crea los botones de los centros) -->
+    <dimen name="alto_boton_centro">56dp</dimen>
+    <dimen name="espacio_boton_centro">8dp</dimen>
+</resources>

@@ -5,6 +5,7 @@ import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.database.Cursor;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.provider.CalendarContract;
 import android.view.View;
@@ -24,6 +25,7 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+import java.io.ByteArrayOutputStream;
 import java.util.Calendar;
 import java.util.Locale;
 
@@ -35,7 +37,10 @@ import java.util.Locale;
  *   (cámara), calendario, botón "Enviar" y botón "Ver mis citas".
  * - SERVICIOS (Fase 3): cámara (botón "Tomar foto") y calendario (botón "Enviar").
  * - BASE DE DATOS (Fase 4): guarda la cita en la tabla citas (INSERT) o, en modo edición,
- *   la actualiza (UPDATE).
+ *   la actualiza (UPDATE). La foto de la fórmula se guarda en la columna foto (BLOB) y la
+ *   cita queda en el HISTORIAL MÉDICO del usuario.
+ * - NOTIFICACIONES (Fase 4): si el usuario las tiene activas en su perfil, se avisa que la
+ *   cita quedó agendada.
  * - MODO EDICIÓN: si la pantalla se abre desde "Mis citas" con el id de una cita, carga sus
  *   datos y el botón pasa a decir "Guardar cambios".
  * - Su diseño visual está en: res/layout/activity_agendar_cita.xml
@@ -62,6 +67,10 @@ public class ActivityAgendarCita extends AppCompatActivity {
     // del teléfono que tome una foto. No necesita el permiso CAMERA, porque la foto la toma
     // la app de cámara del sistema y no ChocóSalud.
     private ActivityResultLauncher<Void> lanzadorCamara;
+
+    // fotoNueva -> la foto que se acaba de tomar (null si no se ha tomado ninguna).
+    // Al guardar la cita se convierte en bytes para la columna foto de la tabla citas.
+    private Bitmap fotoNueva;
 
     // BASE DE DATOS (Fase 4)
     // baseDatos -> acceso a la base de datos SQLite de la app.
@@ -99,6 +108,7 @@ public class ActivityAgendarCita extends AppCompatActivity {
                 new ActivityResultContracts.TakePicturePreview(),
                 (Bitmap foto) -> {
                     if (foto != null) {
+                        fotoNueva = foto;
                         imagenFormula.setImageBitmap(foto);
                         imagenFormula.setVisibility(View.VISIBLE);
                         Toast.makeText(this, R.string.foto_adjuntada, Toast.LENGTH_SHORT).show();
@@ -185,12 +195,38 @@ public class ActivityAgendarCita extends AppCompatActivity {
             String especialidad = cita.getString(cita.getColumnIndexOrThrow(BaseDatos.CITA_ESPECIALIDAD));
             String telefono = cita.getString(cita.getColumnIndexOrThrow(BaseDatos.CITA_TELEFONO));
             String fecha = cita.getString(cita.getColumnIndexOrThrow(BaseDatos.CITA_FECHA));
+            // getBlob: lee la foto en bytes (null si la cita no tiene foto).
+            byte[] foto = cita.getBlob(cita.getColumnIndexOrThrow(BaseDatos.CITA_FOTO));
 
             seleccionarEspecialidad(especialidad);
             seleccionarCentro(centroId);
             campoContacto.setText(telefono);
             mostrarFecha(fecha);
+            mostrarFotoGuardada(foto);
         }
+    }
+
+    // MÉTODO: mostrarFotoGuardada -> si la cita ya tenía foto, la muestra en la pantalla.
+    private void mostrarFotoGuardada(byte[] foto) {
+        if (foto != null) {
+            // decodeByteArray: convierte los bytes guardados otra vez en una imagen.
+            imagenFormula.setImageBitmap(BitmapFactory.decodeByteArray(foto, 0, foto.length));
+            imagenFormula.setVisibility(View.VISIBLE);
+        }
+    }
+
+    /*
+     * MÉTODO: fotoEnBytes
+     * - Convierte la foto en bytes (formato JPEG) para guardarla en la columna BLOB.
+     * - DEVUELVE: los bytes, o null si no se tomó foto.
+     */
+    private byte[] fotoEnBytes() {
+        if (fotoNueva == null) {
+            return null;
+        }
+        ByteArrayOutputStream salida = new ByteArrayOutputStream();
+        fotoNueva.compress(Bitmap.CompressFormat.JPEG, 90, salida); // 90 = calidad (0 a 100)
+        return salida.toByteArray();
     }
 
     // MÉTODO: seleccionarEspecialidad -> deja marcada en el selector la especialidad guardada.
@@ -248,10 +284,11 @@ public class ActivityAgendarCita extends AppCompatActivity {
         String telefono = obtenerTexto(campoContacto);
         String fecha = formatearFecha(fechaCita);
         long centroId = selectorCentro.getSelectedItemId(); // el _id del centro elegido
+        byte[] foto = fotoEnBytes(); // la fórmula médica (o null si no hay foto nueva)
 
         if (modoEdicion()) {
             // UPDATE: cambia la cita que ya existe.
-            int filas = baseDatos.actualizarCita(citaId, usuarioId, centroId, especialidad, telefono, fecha);
+            int filas = baseDatos.actualizarCita(citaId, usuarioId, centroId, especialidad, telefono, fecha, foto);
             if (filas > 0) {
                 Toast.makeText(this, R.string.cita_actualizada, Toast.LENGTH_SHORT).show();
                 finish(); // vuelve a "Mis citas", que se recarga sola
@@ -260,11 +297,15 @@ public class ActivityAgendarCita extends AppCompatActivity {
             }
         } else {
             // INSERT: guarda la cita nueva.
-            long nuevaCita = baseDatos.agendarCita(usuarioId, centroId, especialidad, telefono, fecha);
+            long nuevaCita = baseDatos.agendarCita(usuarioId, centroId, especialidad, telefono, fecha, foto);
             if (nuevaCita == BaseDatos.SIN_CITA) {
                 Toast.makeText(this, R.string.error_guardar_cita, Toast.LENGTH_LONG).show();
             } else {
                 Toast.makeText(this, R.string.cita_guardada, Toast.LENGTH_SHORT).show();
+                // Servicio de notificaciones: solo si el usuario las activó en su perfil.
+                if (baseDatos.notificacionesActivas(usuarioId)) {
+                    Notificaciones.avisarCitaAgendada(this, nuevaCita, especialidad, fecha);
+                }
                 abrirCalendario(); // servicio de calendario (Fase 3)
             }
         }
