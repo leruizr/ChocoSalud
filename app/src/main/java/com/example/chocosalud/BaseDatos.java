@@ -12,6 +12,14 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Locale;
 
 
+/*
+ * CLASE: BaseDatos -> CONEXIÓN a la base de datos SQLite de la app (Fase 4)
+ *
+ * - "extends SQLiteOpenHelper": hereda de la clase de Android que crea, abre y actualiza
+ *   la base de datos. La base es un archivo (chocosalud.db) guardado dentro del teléfono.
+ * - Aquí están las 3 tablas (usuarios, centros_salud y citas) y TODAS las consultas (CRUD):
+ *   las pantallas no escriben SQL, solo llaman a los métodos de esta clase.
+ */
 public class BaseDatos extends SQLiteOpenHelper {
 
     // CONSTANTES: nombre del archivo y versión de la base de datos.
@@ -89,11 +97,23 @@ public class BaseDatos extends SQLiteOpenHelper {
     private final Context contexto;
     public static final long SIN_USUARIO = -1;
 
+    /*
+     * CONSTRUCTOR: BaseDatos
+     * - Cada pantalla crea la conexión con: baseDatos = new BaseDatos(this);
+     * - super(...) le pasa a SQLiteOpenHelper el nombre del archivo y la versión.
+     *   El archivo todavía no se abre aquí: se abre con getWritableDatabase() o getReadableDatabase().
+     */
     public BaseDatos(Context contexto) {
         super(contexto, NOMBRE, null, VERSION);
         this.contexto = contexto;
     }
 
+    /*
+     * MÉTODO: onConfigure
+     * - Android lo llama cada vez que abre la base de datos.
+     * - Activa las llaves foráneas (FOREIGN KEY): así SQLite respeta las relaciones entre tablas
+     *   (por ejemplo, borra las citas de un usuario cuando se elimina su cuenta).
+     */
     @Override
     public void onConfigure(SQLiteDatabase db) {
         super.onConfigure(db);
